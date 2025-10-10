@@ -1,0 +1,18 @@
+[
+  {
+    "Qid": "Q1",
+    "question_type": "technical-approach",
+    "question_text": "How do you approach learning a new technology or programming language? Can you give an example?",
+    "difficulty_level": "medium",
+    "topic": "Learning & Adaptability",
+    "focus_area": "Technical Learning"
+  },
+  {
+    "Qid": "Q2",
+    "question_type": "technical-approach",
+    "question_text": "When you start a new project from scratch, what are the first few steps you take from a technical perspective?",
+    "difficulty_level": "medium",
+    "topic": "Project Initiation",
+    "focus_area": "Technical Planning"
+  }
+]

@@ -1,0 +1,85 @@
+/* DSA Tutor Responsive Styles */
+
+/* Ensure content doesn't overflow */
+.overflow-guard {
+  overflow: hidden;
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 1024px) {
+  .dsa-layout {
+    flex-direction: column;
+  }
+
+  .dsa-left-panel {
+    width: 100% !important;
+    height: 50vh;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .dsa-right-panel {
+    width: 100%;
+    height: 50vh;
+  }
+
+  .dsa-challenge,
+  .dsa-assistance {
+    height: 50% !important;
+  }
+
+  .dsa-editor {
+    height: 70% !important;
+  }
+
+  .dsa-output {
+    height: 30% !important;
+  }
+}
+
+/* Ensure text doesn't overflow in various components */
+.text-ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Ensure code blocks are scrollable horizontally */
+pre {
+  max-width: 100%;
+  overflow-x: auto;
+}
+
+/* Ensure Monaco editor adapts to container */
+.monaco-editor {
+  width: 100% !important;
+}
+
+/* Ensure tabs don't overflow */
+.tabs-container {
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+/* Ensure dropdown menus don't get cut off */
+.dropdown-container {
+  position: relative;
+}
+
+/* Ensure buttons remain visible */
+.button-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* Ensure form elements are properly sized */
+.input-container {
+  width: 100%;
+}
+
+/* Ensure alerts and notifications are visible */
+.alert-container {
+  max-width: 100%;
+  overflow: hidden;
+}

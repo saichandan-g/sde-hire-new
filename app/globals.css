@@ -1,0 +1,176 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.3% 48%;
+  }
+}
+
+/* Neon Dark Theme */
+.dark {
+  /* Dark background */
+  --background: 230 35% 7%;
+  --foreground: 210 40% 98%;
+
+  /* Neon colors */
+  --neon-blue: 210 100% 60%;
+  --neon-purple: 280 100% 65%;
+  --neon-pink: 330 100% 65%;
+  --neon-green: 140 100% 55%;
+  --neon-cyan: 180 100% 60%;
+  --neon-yellow: 60 100% 60%;
+
+  /* Card and UI elements */
+  --card: 230 30% 10%;
+  --card-foreground: 210 40% 98%;
+  --popover: 230 30% 10%;
+  --popover-foreground: 210 40% 98%;
+
+  /* Primary and accent colors */
+  --primary: var(--neon-blue);
+  --primary-foreground: 210 40% 98%;
+  --secondary: 230 25% 15%;
+  --secondary-foreground: 210 40% 98%;
+
+  /* Muted elements */
+  --muted: 230 25% 15%;
+  --muted-foreground: 210 40% 80%;
+
+  /* Accent elements */
+  --accent: 230 25% 15%;
+  --accent-foreground: 210 40% 98%;
+
+  /* Destructive elements */
+  --destructive: 0 100% 60%;
+  --destructive-foreground: 210 40% 98%;
+
+  /* Borders and inputs */
+  --border: 230 25% 20%;
+  --input: 230 25% 20%;
+  --ring: var(--neon-blue);
+}
+
+@layer components {
+  /* Neon text effects for dark mode */
+  .dark .neon-text-blue {
+    color: hsl(var(--neon-blue));
+    text-shadow: 0 0 5px hsla(var(--neon-blue), 0.5), 0 0 10px hsla(var(--neon-blue), 0.3);
+  }
+
+  .dark .neon-text-purple {
+    color: hsl(var(--neon-purple));
+    text-shadow: 0 0 5px hsla(var(--neon-purple), 0.5), 0 0 10px hsla(var(--neon-purple), 0.3);
+  }
+
+  .dark .neon-text-pink {
+    color: hsl(var(--neon-pink));
+    text-shadow: 0 0 5px hsla(var(--neon-pink), 0.5), 0 0 10px hsla(var(--neon-pink), 0.3);
+  }
+
+  .dark .neon-text-green {
+    color: hsl(var(--neon-green));
+    text-shadow: 0 0 5px hsla(var(--neon-green), 0.5), 0 0 10px hsla(var(--neon-green), 0.3);
+  }
+
+  .dark .neon-text-cyan {
+    color: hsl(var(--neon-cyan));
+    text-shadow: 0 0 5px hsla(var(--neon-cyan), 0.5), 0 0 10px hsla(var(--neon-cyan), 0.3);
+  }
+
+  .dark .neon-text-yellow {
+    color: hsl(var(--neon-yellow));
+    text-shadow: 0 0 5px hsla(var(--neon-yellow), 0.5), 0 0 10px hsla(var(--neon-yellow), 0.3);
+  }
+
+  /* Neon borders for dark mode */
+  .dark .neon-border-blue {
+    border-color: hsl(var(--neon-blue));
+    box-shadow: 0 0 5px hsla(var(--neon-blue), 0.5), inset 0 0 5px hsla(var(--neon-blue), 0.2);
+  }
+
+  .dark .neon-border-purple {
+    border-color: hsl(var(--neon-purple));
+    box-shadow: 0 0 5px hsla(var(--neon-purple), 0.5), inset 0 0 5px hsla(var(--neon-purple), 0.2);
+  }
+
+  .dark .neon-border-pink {
+    border-color: hsl(var(--neon-pink));
+    box-shadow: 0 0 5px hsla(var(--neon-pink), 0.5), inset 0 0 5px hsla(var(--neon-pink), 0.2);
+  }
+
+  .dark .neon-border-green {
+    border-color: hsl(var(--neon-green));
+    box-shadow: 0 0 5px hsla(var(--neon-green), 0.5), inset 0 0 5px hsla(var(--neon-green), 0.2);
+  }
+
+  .dark .neon-border-cyan {
+    border-color: hsl(var(--neon-cyan));
+    box-shadow: 0 0 5px hsla(var(--neon-cyan), 0.5), inset 0 0 5px hsla(var(--neon-cyan), 0.2);
+  }
+
+  /* Neon glow effect for elements */
+  .dark .neon-glow {
+    transition: all 0.3s ease;
+  }
+
+  .dark .neon-glow:hover {
+    filter: brightness(1.2);
+  }
+
+  /* Dark mode editor styles */
+  .dark .monaco-editor {
+    background-color: hsl(230 35% 10%) !important;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}

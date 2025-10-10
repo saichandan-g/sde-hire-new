@@ -1,0 +1,187 @@
+/* HR Interview Responsive Styles */
+
+/* Ensure content doesn't overflow */
+.overflow-guard {
+  overflow: hidden;
+}
+
+/* Responsive adjustments for smaller screens */
+@media (max-width: 1024px) {
+  .hr-layout {
+    flex-direction: column;
+  }
+
+  .hr-sidebar {
+    width: 100% !important;
+    height: 40vh;
+    border-right: none;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hr-main-panel {
+    width: 100%;
+    height: 60vh;
+  }
+
+  .hr-video-section {
+    height: 60% !important;
+  }
+
+  .hr-answer-section {
+    height: 40% !important;
+  }
+}
+
+/* Ensure text doesn't overflow in various components */
+.text-ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Ensure video elements are properly contained */
+.hr-video-container {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* Ensure upload area is properly sized */
+.hr-upload-area {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+/* Ensure cards maintain consistent spacing */
+.hr-card {
+  transition: all 0.2s ease-in-out;
+}
+
+.hr-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Dark mode specific adjustments */
+.dark .hr-card {
+  background-color: hsl(var(--card));
+  border-color: hsl(var(--border));
+}
+
+.dark .hr-video-container {
+  background-color: hsl(var(--muted));
+}
+
+/* Ensure buttons remain visible and accessible */
+.hr-button-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+/* Ensure form elements are properly sized */
+.hr-input-container {
+  width: 100%;
+}
+
+/* Ensure alerts and notifications are visible */
+.hr-alert-container {
+  max-width: 100%;
+  overflow: hidden;
+}
+
+/* Animation utilities */
+.hr-fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.hr-slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+.animate-slide-up {
+  animation: slideUp 0.4s ease-out;
+}
+
+.animate-bounce {
+  animation: bounce 1s infinite;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@keyframes bounce {
+  0%, 20%, 53%, 80%, 100% {
+    transform: translate3d(0, 0, 0);
+  }
+  40%, 43% {
+    transform: translate3d(0, -8px, 0);
+  }
+  70% {
+    transform: translate3d(0, -4px, 0);
+  }
+  90% {
+    transform: translate3d(0, -2px, 0);
+  }
+}
+
+/* Progress indicators */
+.hr-progress-bar {
+  background: linear-gradient(90deg, hsl(var(--primary)) 0%, hsl(var(--primary)) 100%);
+  transition: width 0.3s ease;
+}
+
+/* Status indicators */
+.hr-status-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-size: 0.875rem;
+  font-weight: 500;
+}
+
+.hr-status-active {
+  background-color: hsl(var(--primary) / 0.1);
+  color: hsl(var(--primary));
+}
+
+.hr-status-inactive {
+  background-color: hsl(var(--muted));
+  color: hsl(var(--muted-foreground));
+}
+
+/* Dark mode status indicators */
+.dark .hr-status-active {
+  background-color: hsl(var(--primary) / 0.2);
+  color: hsl(var(--primary));
+}
+
+.dark .hr-status-inactive {
+  background-color: hsl(var(--muted));
+  color: hsl(var(--muted-foreground));
+}

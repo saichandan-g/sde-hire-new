@@ -1,0 +1,17 @@
+John Doe
+Software Engineer
+
+Summary:
+Highly motivated Software Engineer with 5 years of experience in developing web applications using React, Node.js, and Python. Proven ability to deliver high-quality code and collaborate effectively in agile environments.
+
+Experience:
+Senior Software Engineer at Tech Solutions Inc. (2022-Present)
+- Led development of a new customer portal, reducing support tickets by 20%.
+- Mentored junior developers and conducted code reviews.
+
+Software Engineer at Innovate Corp. (2019-2022)
+- Developed RESTful APIs for various microservices.
+- Implemented front-end features using React and Redux.
+
+Skills:
+React, Node.js, Python, JavaScript, TypeScript, AWS, Docker, SQL, MongoDB, Agile, Git, CI/CD.
