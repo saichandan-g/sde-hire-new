@@ -96,7 +96,7 @@ async function generateMistralHRQuestions(resumeAnalysis: any, userResponses: Us
     }
     
     console.log(`[Mistral API] Using API Key (masked, length ${mistralApiKey.length}): ${mistralApiKey.substring(0, 6) + '...'}`);
-    console.log(`[Mistral API] Full Authorization header being sent: Bearer ${mistralApiKey}`);
+    // console.log(`[Mistral API] Full Authorization header being sent: Bearer ${mistralApiKey}`);
     
     // Add randomness to prompt to avoid same questions
     const randomSeed = Math.floor(Math.random() * 1000);
@@ -753,7 +753,7 @@ async function generateGrokHRQuestions(resumeAnalysis: any, userResponses: UserR
     }
 
     console.log(`[Grok API] Using API Key (masked, length ${grokApiKey.length}): ${grokApiKey.substring(0, 6) + '...'}`);
-    console.log(`[Grok API] Full Authorization header being sent: Bearer ${grokApiKey}`);
+    // console.log(`[Grok API] Full Authorization header being sent: Bearer ${grokApiKey}`);
 
     // Add randomness to prompt to avoid same questions
     const randomSeed = Math.floor(Math.random() * 1000);
