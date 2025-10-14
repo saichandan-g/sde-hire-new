@@ -1359,12 +1359,18 @@ export default function TechnicalInterviewSimulator() {
                                     </p>
                                     <div className="text-xs text-slate-600 dark:text-slate-400">
                                       <span className="font-medium">Your answer:</span> {question.userAnswer || 'No answer'}
-                            </div>
+                                      {question.userAnswer && questions.find(q => q.id === question.questionId)?.options && (
+                                        ` (${questions.find(q => q.id === question.questionId)?.options?.[question.userAnswer.charCodeAt(0) - 65] || ''})`
+                                      )}
+                                    </div>
                                     {!question.isCorrect && (
                                       <div className="text-xs text-slate-600 dark:text-slate-400 mt-1">
                                         <span className="font-medium">Correct answer:</span> {question.correctAnswer}
-                        </div>
-                      )}
+                                        {question.correctAnswer && questions.find(q => q.id === question.questionId)?.options && (
+                                          ` (${questions.find(q => q.id === question.questionId)?.options?.[question.correctAnswer.charCodeAt(0) - 65] || ''})`
+                                        )}
+                                      </div>
+                                    )}
                     </div>
                               ))}
                           </div>
