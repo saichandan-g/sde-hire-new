@@ -853,13 +853,11 @@ export function HRInterviewPanel({
       setFinalTranscript("");
       finalTranscriptRef.current = "";
 
-      // Wait a bit more then start fresh, only if not already listening
-      setTimeout(() => {
-        if (userMicPrefRef.current && !isSpeechListening) {
-          console.log("[STT Restart Helper] Starting fresh STT after reset.");
-          startSTT();
-        }
-      }, 100); // Small internal delay for state propagation
+      // Start fresh, only if user prefers mic on and STT is not already listening
+      if (userMicPrefRef.current && !isSpeechListening) {
+        console.log("[STT Restart Helper] Starting fresh STT after reset.");
+        startSTT();
+      }
     }, delay);
   }, [audioStream, isSpeechListening, startSTT]);
 
@@ -879,52 +877,55 @@ export function HRInterviewPanel({
       }
 
       window.speechSynthesis.cancel();
-      const u = new SpeechSynthesisUtterance(text);
-      u.voice = chosenVoice; // chosenVoice is guaranteed by the check above
-      u.lang = chosenVoice.lang || "en-GB";
+      // Add a small delay to ensure cancel() takes effect
+      setTimeout(() => {
+        const u = new SpeechSynthesisUtterance(text);
+        u.voice = chosenVoice; // chosenVoice is guaranteed by the check above
+        u.lang = chosenVoice.lang || "en-GB";
 
-      u.rate = 0.92;
-      u.pitch = voiceGender === "male" ? 0.85 : 1.05;
-      u.volume = 1.0;
+        u.rate = 0.92;
+        u.pitch = voiceGender === "male" ? 0.85 : 1.05;
+        u.volume = 1.0;
 
-      u.onstart = () => {
-        console.log("[TTS] onstart: TTS speaking started.");
-        setIsSpeaking(true);
-        // TTS starts: stop STT, mute mic, mark auto-muted
-        if (isSpeechListening) {
-          console.log("[TTS] onstart: STT was listening, stopping it now.");
-          stopSTT();
-          prevMicEnabledRef.current = micTrackRef.current?.enabled ?? true;
-          if (micTrackRef.current) micTrackRef.current.enabled = false;
-          setIsMicMuted(true);
-          autoMutedForTTSRef.current = true;
-        }
+        u.onstart = () => {
+          console.log("[TTS] onstart: TTS speaking started.");
+          setIsSpeaking(true);
+          // TTS starts: stop STT, mute mic, mark auto-muted
+          if (isSpeechListening) {
+            console.log("[TTS] onstart: STT was listening, stopping it now.");
+            stopSTT();
+            prevMicEnabledRef.current = micTrackRef.current?.enabled ?? true;
+            if (micTrackRef.current) micTrackRef.current.enabled = false;
+            setIsMicMuted(true);
+            autoMutedForTTSRef.current = true;
+          }
 
-        if (!startWaveIfReady()) {
-          const t0 = performance.now();
-          const tick = () => {
-            if (startWaveIfReady()) return;
-            if (performance.now() - t0 < 300) requestAnimationFrame(tick);
-          };
-          requestAnimationFrame(tick);
-        }
-      };
-      u.onend = () => {
-        console.log("[TTS] onend: TTS speaking finished.");
-        setIsSpeaking(false);
-        autoMutedForTTSRef.current = false;
-        restartSTTAfterTTS(500); // Use helper with consistent delay
-      };
-      u.onerror = (event) => {
-        const errorType = event?.error || 'unknown';
-        console.error(`[TTS] onerror: TTS speaking failed. Error type: ${errorType}`, event);
-        setIsSpeaking(false);
-        autoMutedForTTSRef.current = false;
-        restartSTTAfterTTS(300); // Use helper with consistent delay
-      };
+          if (!startWaveIfReady()) {
+            const t0 = performance.now();
+            const tick = () => {
+              if (startWaveIfReady()) return;
+              if (performance.now() - t0 < 300) requestAnimationFrame(tick);
+            };
+            requestAnimationFrame(tick);
+          }
+        };
+        u.onend = () => {
+          console.log("[TTS] onend: TTS speaking finished.");
+          setIsSpeaking(false);
+          autoMutedForTTSRef.current = false;
+          restartSTTAfterTTS(500); // Use helper with consistent delay
+        };
+        u.onerror = (event) => {
+          const errorType = event?.error || 'unknown';
+          console.error(`[TTS] onerror: TTS speaking failed. Error type: ${errorType}`, event);
+          setIsSpeaking(false);
+          autoMutedForTTSRef.current = false;
+          restartSTTAfterTTS(300); // Use helper with consistent delay
+        };
 
-      ttsUtterRef.current = u;
-      window.speechSynthesis.speak(u);
+        ttsUtterRef.current = u;
+        window.speechSynthesis.speak(u);
+      }, 100); // 100ms delay after cancel
     } catch (e) {
       console.warn("TTS speak failed:", e);
     }

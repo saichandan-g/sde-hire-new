@@ -11,7 +11,6 @@ import { AIModelSelection } from "@/components/ai-model-selection"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import "./hr-interview.css"
-import fixedQuestionsData from './fixed-questions.json'; // Import fixed questions
 
 type HRInterviewStage =
   | "upload"
@@ -92,12 +91,9 @@ export default function HRInterviewSimulatorPage() {
   const [apiKey, setApiKey] = useState<string>("")
   const [isLoading, setIsLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
-  const [fixedQuestions, setFixedQuestions] = useState<HRQuestion[]>([]); // State for fixed questions
   const [dynamicQuestions, setDynamicQuestions] = useState<HRQuestion[]>([]); // State for dynamic questions
   const [allQuestions, setAllQuestions] = useState<HRQuestion[]>([]); // Combined questions
   const [isGeneratingDynamicQuestions, setIsGeneratingDynamicQuestions] = useState(false); // New state for dynamic question generation
-  const [shouldGenerateDynamicQuestions, setShouldGenerateDynamicQuestions] = useState(false); // New state to trigger dynamic question generation
-
   // New state for Phase 4: Response Tracking
   const [interviewResponses, setInterviewResponses] = useState<InterviewResponse[]>([])
   const [responseStatus, setResponseStatus] = useState<ResponseStatus>({
@@ -197,19 +193,9 @@ export default function HRInterviewSimulatorPage() {
         console.error("[Resume Upload] Failed to save to sessionStorage:", e)
       }
 
-      // Step 2: Load fixed questions
-      const loadedFixedQuestions: HRQuestion[] = fixedQuestionsData.map((q, index) => ({
-        ...q,
-        Qid: `Q${index + 1}`, // Ensure Qid is string
-      }));
-      setFixedQuestions(loadedFixedQuestions);
-      setAllQuestions(loadedFixedQuestions); // Initialize allQuestions with fixed questions
-      setHRInterviewQuestions(loadedFixedQuestions); // Also set for initial display
-      console.log(`[Debug] After fixed questions load: fixedQuestions.length=${loadedFixedQuestions.length}, allQuestions.length=${loadedFixedQuestions.length}`);
-
-      // Move to questions-ready stage after fixed questions are loaded
-      setHRInterviewStage("questions-ready");
-      console.log("[Resume Upload] Analysis complete — fixed questions loaded");
+      // Step 2: Generate all 4 dynamic questions based on resume analysis
+      console.log("[Resume Upload] Analysis complete — generating all AI questions.");
+      await generateDynamicQuestions(analysis, []); // Generate all 4 questions in one go
 
     } catch (err) {
       console.error("Error processing resume:", err)
@@ -220,51 +206,99 @@ export default function HRInterviewSimulatorPage() {
     }
   }
 
-  // New function to generate dynamic questions after fixed questions are answered
-  const generateDynamicQuestions = async (currentResponses: InterviewResponse[]) => {
+  // New function to generate all 4 dynamic questions in a single flow
+  const generateDynamicQuestions = async (currentResumeAnalysis: HRResumeAnalysis | null, currentResponses: InterviewResponse[]) => {
     try {
-      setIsLoading(true);
+      setIsGeneratingDynamicQuestions(true);
       setError(null);
-      setHRInterviewStage("analyzing"); // Show analyzing stage again for dynamic questions
+      setHRInterviewStage("analyzing"); // Show analyzing stage for all question generation
 
       console.log(`[Frontend] API Key before encoding: ${apiKey ? 'Provided' : 'Not Provided'}`);
-      const dynamicQuestionsResponse = await fetch("/api/hr-questions", {
+      console.log(`[Frontend] Generating initial 2 dynamic questions.`);
+
+      // First API call for initial 2 questions
+      const initialQuestionsResponse = await fetch("/api/hr-questions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          resumeAnalysis: hrResumeAnalysis,
+          resumeAnalysis: currentResumeAnalysis,
           selectedAIModel: selectedAIModel,
-          userResponses: currentResponses.slice(0, 2).map(res => ({ Qid: res.Qid, userResponse: res.userResponse })), // Pass only answers to fixed questions
-          apiKey: apiKey, // Send as plain text for debugging
+          userResponses: [], // No responses yet for initial questions
+          apiKey: apiKey,
+          numQuestions: 2, // Request 2 questions
         }),
       });
 
-      console.log('[Frontend] Raw response from /api/hr-questions:', dynamicQuestionsResponse);
-
-      if (!dynamicQuestionsResponse.ok) {
-        const errorData = await dynamicQuestionsResponse.json();
-        console.error('[Frontend] Error response data:', errorData);
-        throw new Error(errorData.error || "Failed to generate dynamic questions");
+      if (!initialQuestionsResponse.ok) {
+        const errorData = await initialQuestionsResponse.json();
+        throw new Error(errorData.error || "Failed to generate initial dynamic questions");
       }
 
-      const dynamicQ = await dynamicQuestionsResponse.json();
-      console.log('[Frontend] Parsed dynamic questions response:', dynamicQ);
-      const parsedDynamicQuestions: HRQuestion[] = Array.isArray(dynamicQ)
-        ? dynamicQ
-        : dynamicQ?.questions || dynamicQ?.data || [];
+      const initialQ = await initialQuestionsResponse.json();
+      const parsedInitialQuestions: HRQuestion[] = Array.isArray(initialQ)
+        ? initialQ
+        : initialQ?.questions || initialQ?.data || [];
 
-      setDynamicQuestions(parsedDynamicQuestions);
-      setAllQuestions([...fixedQuestions, ...parsedDynamicQuestions]); // Combine fixed and dynamic
-      setHRInterviewQuestions([...fixedQuestions, ...parsedDynamicQuestions]); // Update for display
-      console.log(`[Debug] After dynamic questions generation: fixedQuestions.length=${fixedQuestions.length}, dynamicQuestions.length=${parsedDynamicQuestions.length}, allQuestions.length=${fixedQuestions.length + parsedDynamicQuestions.length}`);
+      if (parsedInitialQuestions.length === 0) {
+        throw new Error("No initial questions generated.");
+      }
 
-      setHRInterviewStage("questions-ready");
+      // Assign unique Qids for the first set (Q1, Q2)
+      const uniquelyIdInitialQuestions = parsedInitialQuestions.map((q, index) => ({
+        ...q,
+        Qid: `Q${index + 1}`,
+      }));
+
+      // Prepare responses for the second API call (using Qids from uniquelyIdInitialQuestions)
+      const initialQuestionResponsesForFollowUp = uniquelyIdInitialQuestions.map(q => ({
+        Qid: q.Qid,
+        userResponse: "", // Responses are not available yet, but Qids provide context
+      }));
+
+      console.log(`[Frontend] Generated initial 2 questions. Generating next 2 follow-up questions.`);
+
+      // Second API call for next 2 questions, using initial questions as context
+      const followUpQuestionsResponse = await fetch("/api/hr-questions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          resumeAnalysis: currentResumeAnalysis,
+          selectedAIModel: selectedAIModel,
+          userResponses: initialQuestionResponsesForFollowUp, // Pass Qids of initial questions for context
+          apiKey: apiKey,
+          numQuestions: 2, // Request 2 follow-up questions
+        }),
+      });
+
+      if (!followUpQuestionsResponse.ok) {
+        const errorData = await followUpQuestionsResponse.json();
+        throw new Error(errorData.error || "Failed to generate follow-up dynamic questions");
+      }
+
+      const followUpQ = await followUpQuestionsResponse.json();
+      const parsedFollowUpQuestions: HRQuestion[] = Array.isArray(followUpQ)
+        ? followUpQ
+        : followUpQ?.questions || followUpQ?.data || [];
+
+      // Assign unique Qids for the second set (Q3, Q4)
+      const uniquelyIdFollowUpQuestions = parsedFollowUpQuestions.map((q, index) => ({
+        ...q,
+        Qid: `Q${index + 3}`, // Start from Q3
+      }));
+
+      const allGeneratedQuestions = [...uniquelyIdInitialQuestions, ...uniquelyIdFollowUpQuestions];
+
+      setDynamicQuestions(allGeneratedQuestions);
+      setAllQuestions(allGeneratedQuestions); // Update allQuestions with all 4 dynamic questions
+      setHRInterviewQuestions(allGeneratedQuestions); // Update for display
+      console.log(`[Debug] After all dynamic questions generation: dynamicQuestions.length=${allGeneratedQuestions.length}, allQuestions.length=${allGeneratedQuestions.length}`);
+
+      setHRInterviewStage("questions-ready"); // Move to questions-ready after all 4 are generated
     } catch (err) {
-      console.error("Error generating dynamic questions:", err);
-      setError(err instanceof Error ? err.message : "Failed to generate dynamic questions");
-      setHRInterviewStage("interview"); // Go back to interview if dynamic generation fails
+      console.error(`Error generating all dynamic questions:`, err);
+      setError(err instanceof Error ? err.message : `Failed to generate all dynamic questions`);
+      setHRInterviewStage("upload"); // Go back to upload if generation fails
     } finally {
-      setIsLoading(false);
       setIsGeneratingDynamicQuestions(false); // Ensure loading state is reset
     }
   };
@@ -301,13 +335,7 @@ export default function HRInterviewSimulatorPage() {
       localStorage.setItem("hr_interview_responses", JSON.stringify(interviewResponses));
     }
 
-    // 2. Check if it's the point to generate dynamic questions (after last fixed question)
-    if (currentQuestionIndex === fixedQuestions.length - 1 && dynamicQuestions.length === 0 && !isGeneratingDynamicQuestions) {
-      setShouldGenerateDynamicQuestions(true);
-      return; // Exit to prevent further navigation until dynamic questions are ready
-    }
-
-    // 3. If there are more questions (either fixed or dynamic)
+    // 2. If there are more questions (all 4 dynamic questions are already generated)
     if (currentQuestionIndex < allQuestions.length - 1) {
       const nextIndex = currentQuestionIndex + 1;
       console.log(`[Question Navigation] Moving from Qid ${allQuestions[currentQuestionIndex].Qid} to Qid ${allQuestions[nextIndex].Qid}`);
@@ -317,7 +345,7 @@ export default function HRInterviewSimulatorPage() {
         const nextResponse = interviewResponses[nextIndex];
         console.log(`[Question Navigation] Moving to Qid ${allQuestions[nextIndex].Qid}, has existing response:`, nextResponse?.hasResponse);
       }
-    } else { // 4. This is the absolute final question (after all dynamic questions have been generated and answered)
+    } else { // 3. This is the absolute final question (after all 4 dynamic questions have been answered)
       console.log("[Question Navigation] Absolute final question reached, generating HR evaluation...");
 
       // Show summary of all responses
@@ -403,7 +431,6 @@ export default function HRInterviewSimulatorPage() {
       saveError: null,
     })
     setHrEvaluation(null)
-    setFixedQuestions([]);
     setDynamicQuestions([]);
     setAllQuestions([]);
   }
@@ -504,51 +531,14 @@ export default function HRInterviewSimulatorPage() {
     [interviewResponses],
   );
 
-  // Initialize responses when fixed questions are ready
+  // Initialize responses when allQuestions are updated
   useEffect(() => {
-    if (hrInterviewStage === "questions-ready" && fixedQuestions.length > 0 && allQuestions.length === fixedQuestions.length) {
-      initializeResponses(fixedQuestions);
-      console.log("[Response Tracking] Initialized responses for fixed questions:", fixedQuestions.length);
+    if (hrInterviewStage === "questions-ready" && allQuestions.length > 0) {
+      initializeResponses(allQuestions);
+      console.log("[Response Tracking] Initialized responses for all questions:", allQuestions.length);
     }
-  }, [hrInterviewStage, fixedQuestions, allQuestions.length, initializeResponses]);
+  }, [hrInterviewStage, allQuestions.length, initializeResponses]);
 
-  // Append responses for dynamic questions without re-initializing
-  useEffect(() => {
-    if (hrInterviewStage === "questions-ready" && dynamicQuestions.length > 0 && allQuestions.length === (fixedQuestions.length + dynamicQuestions.length)) {
-      // Create new response objects only for the new dynamic questions
-      const newDynamicResponses = dynamicQuestions.map((question) => ({
-        Qid: question.Qid,
-        Rid: `R${question.Qid.substring(1)}`,
-        questionText: question.question_text,
-        questionType: question.question_type,
-        questionTopic: question.topic,
-        userResponse: "",
-        timestamp: "",
-        responseLength: 0,
-        hasResponse: false,
-      }));
-
-      // Append new responses to the existing ones
-      console.log(`[Debug] Inside useEffect for dynamic responses: fixedQuestions.length=${fixedQuestions.length}, dynamicQuestions.length=${dynamicQuestions.length}, allQuestions.length=${allQuestions.length}`);
-      setInterviewResponses(prevResponses => {
-        // Make sure we don't add duplicates
-        const existingQids = new Set(prevResponses.map(r => r.Qid));
-        const filteredNewResponses = newDynamicResponses.filter(r => !existingQids.has(r.Qid));
-        
-        if (filteredNewResponses.length > 0) {
-          console.log("[Response Tracking] Appending new responses for dynamic questions:", filteredNewResponses.length);
-          return [...prevResponses, ...filteredNewResponses];
-        }
-        return prevResponses;
-      });
-
-      // After dynamic questions are ready, if we were waiting, move to interview stage
-      if (isGeneratingDynamicQuestions === false) { // Only if generation just completed
-        setHRInterviewStage("interview");
-        setCurrentQuestionIndex(fixedQuestions.length); // Start from the first dynamic question
-      }
-    }
-  }, [hrInterviewStage, dynamicQuestions, fixedQuestions.length, allQuestions.length, isGeneratingDynamicQuestions]);
 
   // Recover responses from localStorage only once when starting interview
   useEffect(() => {
@@ -606,20 +596,6 @@ export default function HRInterviewSimulatorPage() {
   useEffect(() => {
     console.log("[Main Page] currentQuestionIndex changed to:", currentQuestionIndex);
   }, [currentQuestionIndex]);
-
-  // Effect to trigger dynamic question generation
-  useEffect(() => {
-    if (shouldGenerateDynamicQuestions && !isGeneratingDynamicQuestions && fixedQuestions.length > 0) {
-      setIsGeneratingDynamicQuestions(true); // Set loading state
-      setShouldGenerateDynamicQuestions(false); // Reset trigger immediately
-
-      // Call the async function
-      const generate = async () => {
-        await generateDynamicQuestions(interviewResponses);
-      };
-      generate();
-    }
-  }, [shouldGenerateDynamicQuestions, isGeneratingDynamicQuestions, fixedQuestions.length, generateDynamicQuestions, interviewResponses]);
 
   // Effect to save the report when the stage is set to "report"
   useEffect(() => {
@@ -715,7 +691,7 @@ export default function HRInterviewSimulatorPage() {
               <Card className="w-full max-w-lg animate-fade-in">
                 <CardHeader>
                   <CardTitle className="text-center text-xl">
-                    {isGeneratingDynamicQuestions ? "Generating Dynamic Questions" : "Analyzing Your Resume"}
+                    {isGeneratingDynamicQuestions ? "Generating Personalized Questions" : "Analyzing Your Resume"}
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="text-center">
@@ -736,7 +712,7 @@ export default function HRInterviewSimulatorPage() {
                     <div className="flex items-center justify-center space-x-2">
                       <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" aria-label="Step in progress"></div>
                       <span className="text-sm text-blue-600 dark:text-blue-400">
-                        {isGeneratingDynamicQuestions ? "Generating personalized follow-up questions" : "Analyzing skills and experience"}
+                        {isGeneratingDynamicQuestions ? "Generating all 4 personalized questions" : "Analyzing skills and experience"}
                       </span>
                     </div>
                     <div className="flex items-center justify-center space-x-2">
@@ -747,7 +723,7 @@ export default function HRInterviewSimulatorPage() {
 
                   <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
                     {isGeneratingDynamicQuestions
-                      ? "AI is crafting follow-up questions based on your previous answers and resume analysis. Please wait a moment."
+                      ? "AI is crafting all 4 personalized questions based on your resume analysis and initial questions. Please wait a moment."
                       : "We're carefully analyzing your resume to understand your background, skills, and experience. This helps us create relevant interview questions tailored specifically for you."}
                   </p>
 
@@ -854,6 +830,7 @@ export default function HRInterviewSimulatorPage() {
           )}
 
           {/* INTERVIEW (Video mode without questions generated) */}
+          {/* INTERVIEW (Video mode without questions generated) - This path is now less relevant for Pro flow */}
           {hrInterviewStage === "interview" && allQuestions.length === 0 && interviewMode === "video" && (
             <div className="flex flex-col items-center justify-center min-h-[calc(100vh-200px)]">
               <Card className="max-w-xl w-full text-center p-6">
@@ -865,10 +842,11 @@ export default function HRInterviewSimulatorPage() {
                   <div className="flex justify-center gap-2">
                     <Button onClick={() => setHRInterviewStage("mode-selection")}>Back to Mode Selection</Button>
                     <Button onClick={() => {
-                      const genericQuestions = fixedQuestionsData.map((q, index) => ({
-                        ...q,
-                        Qid: `Q${index + 1}`,
-                      }));
+                      // For video mode, if no questions are generated, provide a fallback set
+                      const genericQuestions: HRQuestion[] = [
+                        { Qid: "Q1", question_type: "behavioral", question_text: "Tell me about a time you demonstrated strong teamwork skills.", difficulty_level: "medium", topic: "Teamwork", focus_area: "Collaboration" },
+                        { Qid: "Q2", question_type: "situational", question_text: "How do you handle tight deadlines and pressure?", difficulty_level: "medium", topic: "Stress Management", focus_area: "Resilience" },
+                      ];
                       setAllQuestions(genericQuestions);
                       setHRInterviewQuestions(genericQuestions);
                       initializeResponses(genericQuestions);

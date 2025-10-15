@@ -792,9 +792,9 @@ export function HRInterviewReport({
                 <div className="space-y-3">
                   {interviewResponses && interviewResponses.length > 0 ? (
                     interviewResponses.map((response, index) => (
-                      <div key={response.Qid} className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
+                      <div key={`${response.Qid}-${index}`} className="p-3 bg-gray-50 dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700">
                         <div className="mb-2">
-                          <span className="text-sm font-medium text-gray-600 dark:text-gray-400">{response.Qid}:</span>
+                          <span className="text-sm font-medium text-gray-600 dark:text-gray-400">Q{index + 1}:</span>
                           <span className="ml-2 text-gray-800 dark:text-gray-200">
                             {response.questionText}
                           </span>
@@ -1125,7 +1125,7 @@ export function HRInterviewReport({
                         <div className="flex justify-between items-start mb-3">
                           <div>
                             <h5 className="font-medium text-gray-800 dark:text-gray-200">
-                              Question {qEval.questionNumber}
+                              Question {index + 1}
                             </h5>
                             <p className="text-sm text-gray-600 dark:text-gray-400">
                               {qEval.questionType} • {qEval.questionTopic}
