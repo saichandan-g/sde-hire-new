@@ -85,7 +85,7 @@ export function HRInterviewPanel({
   hrInterviewQuestions,
 }: HRInterviewPanelProps) {
   const [hrAnswerText, setHRAnswerText] = useState("")
-  const [hrThinkTime, setHRThinkTime] = useState(15)
+  const [hrThinkTime, setHRThinkTime] = useState(30) // Increased thinking time to 30 seconds
   const [hrAnswerTime, setHRAnswerTime] = useState(60)
   const [isHRThinking, setIsHRThinking] = useState(true)
   const [hasStartedAnswering, setHasStartedAnswering] = useState(false)
@@ -364,10 +364,71 @@ export function HRInterviewPanel({
   // Centralized STT start/stop helpers
   const startSTT = useCallback(() => {
     console.log("[STT] Attempting to start STT.");
-    if (!speechSupported || !recognitionRef.current) {
-      console.log("[STT] Not starting: speech not supported or recognitionRef missing.");
+    if (!speechSupported) {
+      console.log("[STT] Not starting: speech not supported.");
       return;
     }
+
+    // Robust re-initialization if recognitionRef.current is null
+    if (!recognitionRef.current) {
+      console.warn("[STT] recognitionRef.current is null. Attempting to re-initialize SpeechRecognition.");
+      const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+      if (!SR) {
+        console.error("[STT] SpeechRecognition API not found during re-initialization.");
+        setSpeechError("Speech recognition not supported by this browser.");
+        return;
+      }
+      const r = new SR();
+      r.continuous = true;
+      r.interimResults = true;
+      r.lang = "en-IN";
+      r.onstart = () => {
+        setIsSpeechListening(true);
+        setSpeechError(null);
+        console.log("[SR Event] onstart (re-init): STT is now listening.");
+      };
+      r.onerror = (e: SpeechRecognitionErrorEvent) => {
+        const errorMessages: Record<string, string> = {
+          "audio-capture": "Microphone access issue. Please check permissions.",
+          "network": "Network error. Please check your connection.",
+          "not-allowed": "Microphone permission denied. Please allow access.",
+          "service-not-allowed": "Speech recognition service unavailable.",
+          "bad-grammar": "Language configuration issue.",
+          "language-not-supported": "Language not supported. Using English."
+        };
+        const userMessage = errorMessages[e.error] || `Recognition error: ${e.error}`;
+        setSpeechError(userMessage);
+        console.error("[SR Event] onerror (re-init):", e.error, e.message);
+      };
+      r.onend = () => {
+        setIsSpeechListening(false);
+        console.log("[SR Event] onend (re-init): STT stopped.");
+      };
+      r.onresult = (event: SpeechRecognitionEvent) => {
+        let interim = "";
+        for (let i = event.resultIndex; i < event.results.length; i++) {
+          const res = event.results[i];
+          const transcript = res[0].transcript;
+          if (res.isFinal) {
+            finalTranscriptRef.current += transcript + " ";
+          } else {
+            interim += transcript;
+          }
+        }
+        setFinalTranscript(finalTranscriptRef.current);
+        setInterimTranscript(interim);
+        if (interviewMode === "video") {
+          const fullResponse = (finalTranscriptRef.current + " " + interim).trim();
+          onUpdateResponse(currentQuestionIndex, fullResponse);
+        } else if (interviewMode === "pro") {
+          const combinedResponse = (hrAnswerText + " " + finalTranscriptRef.current + " " + interim).trim();
+          onUpdateResponse(currentQuestionIndex, combinedResponse);
+        }
+      };
+      recognitionRef.current = r;
+      console.log("[STT] recognitionRef.current re-initialized:", recognitionRef.current);
+    }
+
     if (isSpeechListening) {
       console.log("[STT] Not starting: already listening.");
       return; // Already listening
@@ -413,7 +474,7 @@ export function HRInterviewPanel({
         console.error("[STT] Error calling start():", err);
       }
     }, 300); // Increased delay to allow stop to fully take effect
-  }, [speechSupported, isSpeechListening]);
+  }, [speechSupported, isSpeechListening, interviewMode, hrAnswerText, currentQuestionIndex, onUpdateResponse]);
 
   const stopSTT = useCallback(() => {
     console.log("[STT] Attempting to stop STT.");
@@ -520,16 +581,51 @@ export function HRInterviewPanel({
 
   // Detect speech recognition support on client
   useEffect(() => {
-    if (typeof window === "undefined") return;
+    if (typeof window === "undefined") {
+      console.log("[STT Support] Window is undefined. Cannot detect speech support.");
+      return;
+    }
     const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
-    setSpeechSupported(!!SR);
-  }, []);
+    const isSupported = !!SR;
+    console.log(`[STT Support] Detecting speech recognition. Initial support: ${isSupported}.`);
+    setSpeechSupported(isSupported);
+    // Add a listener for when voices change, as this can sometimes indicate speech API readiness
+    const handleVoicesChanged = () => {
+      const currentSupport = !!((window as any).SpeechRecognition || (window as any).webkitSpeechRecognition);
+      if (currentSupport && !speechSupported) { // Only update if it wasn't supported before
+        console.log("[STT Support] Speech API became available (via voiceschanged event). Updating speechSupported to true.");
+        setSpeechSupported(true);
+      }
+    };
+    window.speechSynthesis.onvoiceschanged = handleVoicesChanged;
 
-  // Init speech recognition once on client
+    return () => {
+      window.speechSynthesis.onvoiceschanged = null;
+    };
+  }, [speechSupported]); // Add speechSupported as a dependency to re-evaluate if it changes
+
+  // Init speech recognition once on client - keep instance alive across question changes
   useEffect(() => {
-    if (!speechSupported || typeof window === "undefined") return;
+    console.log("[STT Init] useEffect triggered. speechSupported:", speechSupported, "window defined:", typeof window !== "undefined");
+    if (!speechSupported || typeof window === "undefined") {
+      console.log("[STT Init] Speech not supported or window undefined. Skipping STT initialization.");
+      return;
+    }
+
+    // Only initialize if not already initialized
+    if (recognitionRef.current) {
+      console.log("[STT Init] Recognition instance already exists, skipping initialization.");
+      return;
+    }
 
     const SR = (window as any).SpeechRecognition || (window as any).webkitSpeechRecognition;
+    if (!SR) {
+      console.error("[STT Init] SpeechRecognition API not found. This should not happen if speechSupported is true.");
+      setSpeechError("Speech recognition not supported by this browser.");
+      return;
+    }
+
+    console.log("[STT Init] Initializing SpeechRecognition instance.");
     const r = new SR();
 
     r.continuous = true;
@@ -543,7 +639,7 @@ export function HRInterviewPanel({
       
       // Track recognition state for debugging
       try {
-        if (recognitionRef.current.state) {
+        if (recognitionRef.current?.state) {
           console.log("[SR Event] Recognition state:", recognitionRef.current.state);
         }
       } catch (e) {
@@ -613,16 +709,26 @@ export function HRInterviewPanel({
     };
 
     recognitionRef.current = r;
+    console.log("[STT Init] recognitionRef.current set:", recognitionRef.current);
 
+    // Only cleanup on actual component unmount, NOT on re-renders
     return () => {
-      try {
-        shouldAutoRestartRef.current = false;
-        r.onstart = r.onend = r.onerror = r.onresult = null;
-        r.stop();
-      } catch {}
-      recognitionRef.current = null;
+      console.log("[STT Cleanup] Component unmounting. Cleaning up SpeechRecognition instance.");
+      if (recognitionRef.current) {
+        try {
+          shouldAutoRestartRef.current = false;
+          recognitionRef.current.onstart = recognitionRef.current.onend = recognitionRef.current.onerror = recognitionRef.current.onresult = null;
+          recognitionRef.current.stop();
+          console.log("[STT Cleanup] SpeechRecognition instance stopped and event handlers cleared on unmount.");
+        } catch (e) {
+          console.warn("[STT Cleanup] Error stopping recognition during cleanup:", e);
+        } finally {
+          recognitionRef.current = null;
+          console.log("[STT Cleanup] recognitionRef.current set to null on unmount.");
+        }
+      }
     };
-  }, [speechSupported]);
+  }, [speechSupported]); // This will only run once when speechSupported becomes true, and cleanup only on unmount
 
   // ---------- Save-on-submit ----------
   const handleSubmitHRAnswer = useCallback(async () => {
@@ -710,6 +816,8 @@ export function HRInterviewPanel({
       startCamera();
       startMic();
       warmupTTS();
+      // If setup is already completed, queue the first question to be spoken
+      setPendingUtterance(question);
     } else {
       // First time setup
       setHasHRInterviewStarted(true);
@@ -721,8 +829,8 @@ export function HRInterviewPanel({
       startMic();
       warmupTTS();
     }
-    // Do NOT set pendingUtterance here; wait until user confirms in assistant
-  }, [interviewMode, startCamera, startMic, warmupTTS]);
+    // For first-time setup, pendingUtterance is set in handleConfirmSetup after user interaction.
+  }, [interviewMode, startCamera, startMic, warmupTTS, question]);
 
   // Called when user presses "Start Interview" inside the assistant
   const handleConfirmSetup = useCallback(() => {
@@ -744,7 +852,8 @@ export function HRInterviewPanel({
     window.__hrVideoStream = videoStream;
     window.dispatchEvent(new CustomEvent("hr-video-stream"));
 
-    // Queue TTS to read the current question
+    // Queue TTS to read the current question. The useEffect for pendingUtterance will handle conditions.
+    console.log("[TTS Queue Activation] Setting pending utterance after setup confirmation:", question);
     setPendingUtterance(question);
   }, [videoStream, question]);
 
@@ -798,6 +907,7 @@ export function HRInterviewPanel({
     }
 
     setChosenVoice(v || null);
+    console.log("[TTS Voice Selection] Chosen voice updated:", v ? `${v.name} (${v.lang})` : "None");
   }, [voices, voiceGender, selectPreferredVoice]);
 
   useEffect(() => {
@@ -830,11 +940,14 @@ export function HRInterviewPanel({
       return;
     }
 
-    console.log(`[STT Restart Helper] Attempting to auto-start STT after delay (${delay}ms).`);
+    console.log(`[STT Restart Helper] Attempting to auto-start STT after delay (${delay}ms). User mic preference: ${userMicPrefRef.current}`);
     setTimeout(() => {
       // Ensure mic is enabled before starting STT
       const t = micTrackRef.current ?? audioStream?.getAudioTracks?.()[0] ?? null;
-      if (t) t.enabled = true;
+      if (t) {
+        t.enabled = true;
+        console.log("[STT Restart Helper] Mic track enabled.");
+      }
       setIsMicMuted(false);
 
       // Force reset STT state first to ensure clean start
@@ -855,8 +968,10 @@ export function HRInterviewPanel({
 
       // Start fresh, only if user prefers mic on and STT is not already listening
       if (userMicPrefRef.current && !isSpeechListening) {
-        console.log("[STT Restart Helper] Starting fresh STT after reset.");
+        console.log("[STT Restart Helper] Starting fresh STT after reset and mic enabled.");
         startSTT();
+      } else {
+        console.log("[STT Restart Helper] Not starting STT. User mic preference:", userMicPrefRef.current, "isSpeechListening:", isSpeechListening);
       }
     }, delay);
   }, [audioStream, isSpeechListening, startSTT]);
@@ -871,61 +986,75 @@ export function HRInterviewPanel({
       return;
     }
     try {
-      console.log("[TTS] Attempting to speak question:", text, "with voice:", chosenVoice.name);
+      console.log("[TTS] speakQuestion called with text:", text, "and voice:", chosenVoice.name);
       try { (window.speechSynthesis as any)?.resume?.() } catch (e) {
         console.warn("[TTS] Failed to resume speech synthesis (might be paused by policy):", e);
       }
 
-      window.speechSynthesis.cancel();
-      // Add a small delay to ensure cancel() takes effect
+      const u = new SpeechSynthesisUtterance(text);
+      u.voice = chosenVoice;
+      u.lang = chosenVoice.lang || "en-GB";
+      u.rate = 0.92;
+      u.pitch = voiceGender === "male" ? 0.85 : 1.05;
+      u.volume = 1.0;
+
+      u.onstart = () => {
+        console.log("[TTS] onstart: TTS speaking started. Text length:", text.length);
+        setIsSpeaking(true);
+        if (isSpeechListening) {
+          console.log("[TTS] onstart: STT was listening, stopping it now.");
+          stopSTT();
+          prevMicEnabledRef.current = micTrackRef.current?.enabled ?? true;
+          if (micTrackRef.current) micTrackRef.current.enabled = false;
+          setIsMicMuted(true);
+          autoMutedForTTSRef.current = true;
+        }
+        if (!startWaveIfReady()) {
+          const t0 = performance.now();
+          const tick = () => {
+            if (startWaveIfReady()) return;
+            if (performance.now() - t0 < 300) requestAnimationFrame(tick);
+          };
+          requestAnimationFrame(tick);
+        }
+      };
+
+      u.onend = () => {
+        console.log("[TTS] onend: TTS speaking finished successfully. Speaking state:", window.speechSynthesis.speaking, "Pending state:", window.speechSynthesis.pending);
+        setIsSpeaking(false);
+        autoMutedForTTSRef.current = false;
+        restartSTTAfterTTS(500);
+      };
+
+      u.onerror = (event) => {
+        const errorType = event?.error || 'unknown';
+        console.error(`[TTS] onerror: TTS speaking failed. Error type: ${errorType}. Event:`, event, "Speaking state:", window.speechSynthesis.speaking, "Pending state:", window.speechSynthesis.pending);
+        // Attempt to log more details about the error if available
+        if (event && 'message' in event) {
+          console.error(`[TTS] onerror message: ${event.message}`);
+        }
+        setIsSpeaking(false);
+        autoMutedForTTSRef.current = false;
+        
+        // More aggressive interruption handling: re-queue if interrupted
+        if (errorType === 'interrupted' && text) {
+          console.warn("[TTS] Interruption detected. Re-queueing utterance after a short delay.");
+          setPendingUtterance(text); // Re-queue the same text
+        }
+        // Always attempt to restart STT after an error, regardless of re-queueing
+        restartSTTAfterTTS(300);
+      };
+
+      ttsUtterRef.current = u;
+
+      console.log("[TTS] Before cancel - Speaking:", window.speechSynthesis.speaking, "Pending:", window.speechSynthesis.pending);
+      window.speechSynthesis.cancel(); // Ensure any ongoing speech is cancelled
+      console.log("[TTS] After cancel - Speaking:", window.speechSynthesis.speaking, "Pending:", window.speechSynthesis.pending);
+      // Add a small setTimeout to mitigate potential browser-specific timing issues
       setTimeout(() => {
-        const u = new SpeechSynthesisUtterance(text);
-        u.voice = chosenVoice; // chosenVoice is guaranteed by the check above
-        u.lang = chosenVoice.lang || "en-GB";
-
-        u.rate = 0.92;
-        u.pitch = voiceGender === "male" ? 0.85 : 1.05;
-        u.volume = 1.0;
-
-        u.onstart = () => {
-          console.log("[TTS] onstart: TTS speaking started.");
-          setIsSpeaking(true);
-          // TTS starts: stop STT, mute mic, mark auto-muted
-          if (isSpeechListening) {
-            console.log("[TTS] onstart: STT was listening, stopping it now.");
-            stopSTT();
-            prevMicEnabledRef.current = micTrackRef.current?.enabled ?? true;
-            if (micTrackRef.current) micTrackRef.current.enabled = false;
-            setIsMicMuted(true);
-            autoMutedForTTSRef.current = true;
-          }
-
-          if (!startWaveIfReady()) {
-            const t0 = performance.now();
-            const tick = () => {
-              if (startWaveIfReady()) return;
-              if (performance.now() - t0 < 300) requestAnimationFrame(tick);
-            };
-            requestAnimationFrame(tick);
-          }
-        };
-        u.onend = () => {
-          console.log("[TTS] onend: TTS speaking finished.");
-          setIsSpeaking(false);
-          autoMutedForTTSRef.current = false;
-          restartSTTAfterTTS(500); // Use helper with consistent delay
-        };
-        u.onerror = (event) => {
-          const errorType = event?.error || 'unknown';
-          console.error(`[TTS] onerror: TTS speaking failed. Error type: ${errorType}`, event);
-          setIsSpeaking(false);
-          autoMutedForTTSRef.current = false;
-          restartSTTAfterTTS(300); // Use helper with consistent delay
-        };
-
-        ttsUtterRef.current = u;
-        window.speechSynthesis.speak(u);
-      }, 100); // 100ms delay after cancel
+        window.speechSynthesis.speak(u); // Directly speak the utterance
+        console.log("[TTS] After speak (with setTimeout) - Speaking:", window.speechSynthesis.speaking, "Pending:", window.speechSynthesis.pending);
+      }, 50); // 50ms delay
     } catch (e) {
       console.warn("TTS speak failed:", e);
     }
@@ -937,19 +1066,15 @@ export function HRInterviewPanel({
       console.log("[TTS Queue] Not speaking: Interview not started or setup needed.");
       return; // wait until setup confirmed
     }
-    if (pendingUtterance && chosenVoice && !isFrozen) {
+    if (pendingUtterance && chosenVoice && !isFrozen && hasHRInterviewStarted && !needsSetup) {
       console.log("[TTS Queue] Speaking pending utterance:", pendingUtterance);
-      if (!firstSpeakDoneRef.current) {
-        requestAnimationFrame(() => {
-          speakQuestion(pendingUtterance);
-          firstSpeakDoneRef.current = true;
-        });
-      } else {
-        speakQuestion(pendingUtterance);
-      }
+      // Ensure firstSpeakDoneRef.current is set to true after the first successful speak
+      // Removed requestAnimationFrame for subsequent speaks to prevent potential race conditions/interruptions
+      speakQuestion(pendingUtterance);
+      firstSpeakDoneRef.current = true; // Always set to true after attempting to speak
       setPendingUtterance(null);
     } else {
-      console.log("[TTS Queue] No pending utterance or voice not ready or frozen. Pending:", pendingUtterance, "Voice:", chosenVoice, "Frozen:", isFrozen);
+      console.log("[TTS Queue] Not speaking. Conditions: Pending:", pendingUtterance, "Voice:", chosenVoice?.name, "Frozen:", isFrozen, "hasHRInterviewStarted:", hasHRInterviewStarted, "needsSetup:", needsSetup);
     }
   }, [pendingUtterance, chosenVoice, speakQuestion, hasHRInterviewStarted, isFrozen, needsSetup]);
 
@@ -1054,13 +1179,13 @@ export function HRInterviewPanel({
   useEffect(() => {
     const prevQuestion = questionRef.current;
     questionRef.current = question;
-    if (hasHRInterviewStarted && prevQuestion && prevQuestion !== question) {
+    if (hasHRInterviewStarted && prevQuestion !== question) { // Check if question actually changed
       console.log("[Question Change] New question detected, resetting state");
       console.log("[Question Change] Current question index:", currentQuestionIndex);
       
       // Immediately cancel any ongoing TTS and force reset STT for a clean slate
-      cancelTTS();
       console.log("[Question Change] Force resetting STT for new question");
+      cancelTTS(); // Ensure any ongoing TTS is stopped
       forceResetSTT();
       
       // Reset UI for fresh box - completely isolate from previous question
@@ -1070,8 +1195,9 @@ export function HRInterviewPanel({
       setHRAnswerText("");
       setIsHRThinking(true);
       setHasStartedAnswering(false);
-      setHRThinkTime(15);
+      setHRThinkTime(30); // Ensure thinking time is reset to 30 seconds for new questions
       setHRAnswerTime(60);
+      firstSpeakDoneRef.current = false; // Reset this flag for new question
 
       // Set question ID for new question (use question text as ID)
       currentQuestionIdRef.current = question;
@@ -1079,6 +1205,7 @@ export function HRInterviewPanel({
 
       // Read the question: mutes mic + pauses STT in onstart; onend restores per preference
       if (!isFrozen && !needsSetup) {
+        console.log("[Question Change] Setting pending utterance for new question:", question);
         setPendingUtterance(question);
       }
       
@@ -1099,25 +1226,8 @@ export function HRInterviewPanel({
     // Phase 4: Don't freeze interview, just log the event
     console.log("[Face Detection] Multiple faces detected - logging for report");
     
-    // Optionally pause TTS briefly but don't freeze the entire interview
-    try {
-      if (window.speechSynthesis.speaking) {
-        window.speechSynthesis.pause();
-        policyPausedRef.current = true;
-        setIsSpeaking(false);
-        
-        // Resume TTS after a short pause instead of freezing
-        setTimeout(() => {
-          try {
-            if (policyPausedRef.current && (window.speechSynthesis as any).paused) {
-              (window.speechSynthesis as any).resume();
-              setIsSpeaking(false);
-            }
-          } catch {}
-          policyPausedRef.current = false;
-        }, 1000); // Only pause for 1 second instead of 3
-      }
-    } catch {}
+    // Phase 4: Don't pause TTS, just log the event.
+    // Removed all TTS pause/resume logic from here to prevent interruptions.
     
     // No more freezing - interview continues smoothly
     // setFreezeSecondsLeft(3);
