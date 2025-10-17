@@ -104,12 +104,16 @@ function analyzeResumeForHR(resumeText: string) {
     },
     'Technical Skills': {
       keywords: [
-        'python', 'java', 'c++', 'c', 'sql', 'javascript', 'typescript', 'html', 'css', 'php',
+        'python', 'java', 'c++', 'sql', 'javascript', 'typescript', 'html', 'css', 'php',
         'react', 'react-native', 'nextjs', 'node.js', 'mongodb', 'mysql', 'git', 'kubernetes',
         'docker', 'aws', 'azure', 'gcp', 'linux', 'unix', 'bash', 'shell', 'api', 'rest',
-        'graphql', 'figma', 'photoshop', 'illustrator', 'wordpress', 'bootstrap', 'tailwind'
+        'graphql', 'figma', 'photoshop', 'illustrator', 'wordpress', 'bootstrap', 'tailwind',
+        // Grouped technologies for broader matching
+        'java/jvm', 'javascript/typescript', 'python/django/flask', 'sql/nosql',
+        'frontend/react/angular/vue', 'backend/node/express', 'cloud/aws/azure/gcp',
+        'devops/docker/kubernetes', 'mobile/react-native/flutter'
       ],
-      priority: 'high'
+      priority: 'very-high'
     },
     'Adaptability & Learning': {
       keywords: [

@@ -228,7 +228,7 @@ export function HRInterviewDetailsModal({
                         <p className="text-sm bg-muted p-3 rounded-md">
                           {response.userResponse && response.userResponse.trim() 
                             ? response.userResponse 
-                            : '[No response recorded]'
+                            : '[No response]'
                           }
                         </p>
                       </div>

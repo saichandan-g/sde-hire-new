@@ -51,7 +51,7 @@ export default function ReportPage() {
   const [hrResumeAnalysis, setHRResumeAnalysis] = useState<HRResumeAnalysis | null>(null)
   const [interviewResponses, setInterviewResponses] = useState<InterviewResponse[]>([])
   const [hrEvaluation, setHrEvaluation] = useState<any>(null)
-  const [allQuestions, setAllQuestions] = useState<HRQuestion[]>([]) // Needed for refreshResponsesFromStorage
+  const [interviewSessionId, setInterviewSessionId] = useState<string | null>(null); // New state for session ID
 
   useEffect(() => {
     try {
@@ -59,9 +59,25 @@ export default function ReportPage() {
       if (storedAnalysis) {
         setHRResumeAnalysis(JSON.parse(storedAnalysis))
       }
-      const storedResponses = localStorage.getItem("hr_interview_responses")
-      if (storedResponses) {
-        setInterviewResponses(JSON.parse(storedResponses))
+
+      // Retrieve the interviewSessionId from sessionStorage or URL if available
+      const currentSessionId = sessionStorage.getItem("currentInterviewSessionId");
+      if (currentSessionId) {
+        setInterviewSessionId(currentSessionId);
+        console.log("[ReportPage] Loaded interviewSessionId from sessionStorage:", currentSessionId);
+
+        const storedResponses = localStorage.getItem(`hr_interview_responses_${currentSessionId}`);
+        if (storedResponses) {
+          setInterviewResponses(JSON.parse(storedResponses));
+          console.log("[ReportPage] Loaded interview responses for session:", currentSessionId);
+        } else {
+          console.log("[ReportPage] No responses found for session:", currentSessionId);
+          setInterviewResponses([]); // Ensure it's empty if no responses for this session
+        }
+      } else {
+        console.warn("[ReportPage] No currentInterviewSessionId found in sessionStorage.");
+        // Optionally, try to load a generic one or show a message
+        setInterviewResponses([]);
       }
     } catch (e) {
       console.error("Failed to load data from storage:", e)
@@ -69,19 +85,28 @@ export default function ReportPage() {
   }, [])
 
   const handleStartNewInterview = () => {
-    localStorage.removeItem("hr_interview_responses")
+    // Clear specific session responses if an ID exists
+    if (interviewSessionId) {
+      localStorage.removeItem(`hr_interview_responses_${interviewSessionId}`);
+      console.log(`[ReportPage] Cleared responses for session ID: ${interviewSessionId}`);
+    }
     sessionStorage.removeItem("hrResumeAnalysis")
+    sessionStorage.removeItem("currentInterviewSessionId"); // Clear the session ID from sessionStorage
     router.push("/hr-interview/hr-mode-selection")
   }
 
   const refreshResponsesFromStorage = useCallback(() => {
+    if (!interviewSessionId) {
+      console.warn("[Manual Refresh] No interviewSessionId available to refresh responses.");
+      return false;
+    }
     try {
-      const storedResponses = localStorage.getItem("hr_interview_responses");
+      const storedResponses = localStorage.getItem(`hr_interview_responses_${interviewSessionId}`);
       if (storedResponses) {
         const parsed = JSON.parse(storedResponses);
-        // Assuming allQuestions is available or can be derived if needed for length check
-        if (Array.isArray(parsed)) { // Simplified check for now
+        if (Array.isArray(parsed)) {
           setInterviewResponses(parsed);
+          console.log(`[Manual Refresh] Refreshed responses for session ID: ${interviewSessionId}`);
           return true;
         }
       }
@@ -89,7 +114,7 @@ export default function ReportPage() {
       console.error("[Manual Refresh] Failed to refresh from localStorage:", e);
     }
     return false;
-  }, []);
+  }, [interviewSessionId]);
 
 
   return (
@@ -100,6 +125,7 @@ export default function ReportPage() {
         interviewResponses={interviewResponses}
         onRefreshResponses={refreshResponsesFromStorage}
         hrEvaluation={hrEvaluation}
+        interviewSessionId={interviewSessionId} // Pass the session ID to the report component
       />
     </div>
   )

@@ -85,6 +85,12 @@ export async function POST(request: Request) {
   }
 }
 
+// Helper function to randomly select N items from an array
+function getRandomSubset<T>(array: T[], n: number): T[] {
+  const shuffled = array.sort(() => 0.5 - Math.random());
+  return shuffled.slice(0, n);
+}
+
 async function generateMistralHRQuestions(resumeAnalysis: any, userResponses: UserResponse[], apiKey?: string): Promise<HRQuestion[]> {
   try {
     const mistralApiKey = apiKey || process.env.MISTRAL_API_KEY;
@@ -96,17 +102,24 @@ async function generateMistralHRQuestions(resumeAnalysis: any, userResponses: Us
     }
     
     console.log(`[Mistral API] Using API Key (masked, length ${mistralApiKey.length}): ${mistralApiKey.substring(0, 6) + '...'}`);
-    // console.log(`[Mistral API] Full Authorization header being sent: Bearer ${mistralApiKey}`);
     
-    // Add randomness to prompt to avoid same questions
     const randomSeed = Math.floor(Math.random() * 1000);
     const currentTime = new Date().toISOString();
 
-    // Incorporate user responses into the prompt for dynamic questions
     const userResponsesText = userResponses.length > 0 
       ? `\n\nCANDIDATE'S ANSWERS TO PREVIOUS QUESTIONS:\n${userResponses.map((res, index) => `Q${index + 1} Answer: ${res.userResponse}`).join('\n')}`
       : '';
     
+    // Extract technical skills from resumeAnalysis and randomly select a few
+    const technicalSkills = resumeAnalysis.skills
+      ?.filter((s: any) => s.category === 'Technical Skills')
+      .map((s: any) => s.name) || [];
+    
+    const randomTechnicalSkills = getRandomSubset(technicalSkills, Math.min(technicalSkills.length, 3)); // Select up to 3 random skills
+    const technicalSkillsPrompt = randomTechnicalSkills.length > 0
+      ? `\nRANDOM TECHNICAL FOCUS FOR THIS QUESTION: ${randomTechnicalSkills.join(', ')}`
+      : '';
+
     const prompt = `You are a senior HR interviewer with expertise in creating professional, industry-standard HR interview questions. Based on the comprehensive resume analysis below, and considering the candidate's previous answers (if provided), generate 2 HIGH-QUALITY HR questions that match professional interview standards.
 
 COMPREHENSIVE RESUME ANALYSIS:
@@ -141,12 +154,13 @@ QUESTION QUALITY REQUIREMENTS:
 - Questions should be suitable for a ${resumeAnalysis.experienceLevel || 'mid-level'} professional role
 - Mix of behavioral, situational, and culture-fit questions
 - CRITICAL: If user responses are provided, ensure the new questions build upon or delve deeper into those responses, or explore related areas.
+- CRITICAL: For technical questions, focus on the skills listed in "RANDOM TECHNICAL FOCUS FOR THIS QUESTION" below. Frame technical questions in a behavioral or situational context where possible.
 
 QUESTION DISTRIBUTION (2 questions total):
 - 1 Behavioral question (past experiences)
 - 1 Situational/Technical/Career Goals/Culture Fit question (choose based on resume/responses)
 
-EXAMPLES OF PROFESSIONAL HR QUESTION QUALITY:
+${technicalSkillsPrompt}
 
 Behavioral Example:
 "Tell me about a time when you had to work with a difficult team member. How did you handle the situation and what was the outcome?"
@@ -439,6 +453,16 @@ async function generateOpenAIHRQuestions(resumeAnalysis: any, userResponses: Use
       ? `\n\nCANDIDATE'S ANSWERS TO PREVIOUS QUESTIONS:\n${userResponses.map((res, index) => `Q${index + 1} Answer: ${res.userResponse}`).join('\n')}`
       : '';
 
+    // Extract technical skills from resumeAnalysis and randomly select a few
+    const technicalSkills = resumeAnalysis.skills
+      ?.filter((s: any) => s.category === 'Technical Skills')
+      .map((s: any) => s.name) || [];
+
+    const randomTechnicalSkills = getRandomSubset(technicalSkills, Math.min(technicalSkills.length, 3)); // Select up to 3 random skills
+    const technicalSkillsPrompt = randomTechnicalSkills.length > 0
+      ? `\nRANDOM TECHNICAL FOCUS FOR THIS QUESTION: ${randomTechnicalSkills.join(', ')}`
+      : '';
+
     const prompt = `You are a senior HR interviewer with expertise in creating professional, industry-standard HR interview questions. Based on the comprehensive resume analysis below, and considering the candidate's previous answers (if provided), generate 2 HIGH-QUALITY HR questions that match professional interview standards.
 
 COMPREHENSIVE RESUME ANALYSIS:
@@ -472,10 +496,13 @@ QUESTION QUALITY REQUIREMENTS:
 - Questions should be suitable for a ${resumeAnalysis.experienceLevel || 'mid-level'} professional role
 - Mix of behavioral, situational, and culture-fit questions
 - CRITICAL: If user responses are provided, ensure the new questions build upon or delve deeper into those responses, or explore related areas.
+- CRITICAL: For technical questions, focus on the skills listed in "RANDOM TECHNICAL FOCUS FOR THIS QUESTION" below. Frame technical questions in a behavioral or situational context where possible.
 
 QUESTION DISTRIBUTION (2 questions total):
 - 1 Behavioral question (past experiences)
 - 1 Situational/Technical/Career Goals/Culture Fit question (choose based on resume/responses)
+
+${technicalSkillsPrompt}
 
 EXAMPLES OF PROFESSIONAL HR QUESTION QUALITY:
 
@@ -605,6 +632,16 @@ async function generateGoogleHRQuestions(resumeAnalysis: any, userResponses: Use
       ? `\n\nCANDIDATE'S ANSWERS TO PREVIOUS QUESTIONS:\n${userResponses.map((res, index) => `Q${index + 1} Answer: ${res.userResponse}`).join('\n')}`
       : '';
 
+    // Extract technical skills from resumeAnalysis and randomly select a few
+    const technicalSkills = resumeAnalysis.skills
+      ?.filter((s: any) => s.category === 'Technical Skills')
+      .map((s: any) => s.name) || [];
+
+    const randomTechnicalSkills = getRandomSubset(technicalSkills, Math.min(technicalSkills.length, 3)); // Select up to 3 random skills
+    const technicalSkillsPrompt = randomTechnicalSkills.length > 0
+      ? `\nRANDOM TECHNICAL FOCUS FOR THIS QUESTION: ${randomTechnicalSkills.join(', ')}`
+      : '';
+
     const prompt = `You are a senior HR interviewer with expertise in creating professional, industry-standard HR interview questions. Based on the comprehensive resume analysis below, and considering the candidate's previous answers (if provided), generate 2 HIGH-QUALITY HR questions that match professional interview standards.
 
 COMPREHENSIVE RESUME ANALYSIS:
@@ -638,10 +675,13 @@ QUESTION QUALITY REQUIREMENTS:
 - Questions should be suitable for a ${resumeAnalysis.experienceLevel || 'mid-level'} professional role
 - Mix of behavioral, situational, and culture-fit questions
 - CRITICAL: If user responses are provided, ensure the new questions build upon or delve deeper into those responses, or explore related areas.
+- CRITICAL: For technical questions, focus on the skills listed in "RANDOM TECHNICAL FOCUS FOR THIS QUESTION" below. Frame technical questions in a behavioral or situational context where possible.
 
 QUESTION DISTRIBUTION (2 questions total):
 - 1 Behavioral question (past experiences)
 - 1 Situational/Technical/Career Goals/Culture Fit question (choose based on resume/responses)
+
+${technicalSkillsPrompt}
 
 EXAMPLES OF PROFESSIONAL HR QUESTION QUALITY:
 
@@ -764,6 +804,16 @@ async function generateGrokHRQuestions(resumeAnalysis: any, userResponses: UserR
       ? `\n\nCANDIDATE'S ANSWERS TO PREVIOUS QUESTIONS:\n${userResponses.map((res, index) => `Q${index + 1} Answer: ${res.userResponse}`).join('\n')}`
       : '';
 
+    // Extract technical skills from resumeAnalysis and randomly select a few
+    const technicalSkills = resumeAnalysis.skills
+      ?.filter((s: any) => s.category === 'Technical Skills')
+      .map((s: any) => s.name) || [];
+
+    const randomTechnicalSkills = getRandomSubset(technicalSkills, Math.min(technicalSkills.length, 3)); // Select up to 3 random skills
+    const technicalSkillsPrompt = randomTechnicalSkills.length > 0
+      ? `\nRANDOM TECHNICAL FOCUS FOR THIS QUESTION: ${randomTechnicalSkills.join(', ')}`
+      : '';
+
     const prompt = `You are a senior HR interviewer with expertise in creating professional, industry-standard HR interview questions. Based on the comprehensive resume analysis below, and considering the candidate's previous answers (if provided), generate 2 HIGH-QUALITY HR questions that match professional interview standards.
 
 COMPREHENSIVE RESUME ANALYSIS:
@@ -797,10 +847,13 @@ QUESTION QUALITY REQUIREMENTS:
 - Questions should be suitable for a ${resumeAnalysis.experienceLevel || 'mid-level'} professional role
 - Mix of behavioral, situational, and culture-fit questions
 - CRITICAL: If user responses are provided, ensure the new questions build upon or delve deeper into those responses, or explore related areas.
+- CRITICAL: For technical questions, focus on the skills listed in "RANDOM TECHNICAL FOCUS FOR THIS QUESTION" below. Frame technical questions in a behavioral or situational context where possible.
 
 QUESTION DISTRIBUTION (2 questions total):
 - 1 Behavioral question (past experiences)
 - 1 Situational/Technical/Career Goals/Culture Fit question (choose based on resume/responses)
+
+${technicalSkillsPrompt}
 
 EXAMPLES OF PROFESSIONAL HR QUESTION QUALITY:
 

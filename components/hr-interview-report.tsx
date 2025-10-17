@@ -33,6 +33,7 @@ interface HRInterviewReportProps {
   onRefreshResponses?: () => boolean
   // Phase 4: HR Evaluation data
   hrEvaluation?: any | null
+  interviewSessionId?: string | null // New: Unique ID for the current interview session
 }
 
 interface SessionMetrics {
@@ -569,7 +570,7 @@ export function HRInterviewReport({
           yPos += 5;
           
           // Response
-          const responseText = response.userResponse || '[No response recorded]';
+          const responseText = response.userResponse || '[No response]';
           yPos = addWrappedText(`A: ${responseText}`, yPos);
           yPos += 5;
           
@@ -802,7 +803,7 @@ export function HRInterviewReport({
                         <div className="ml-4 text-sm text-gray-700 dark:text-gray-300">
                           <span className="font-medium">Response:</span>
                           <span className="ml-2">
-                            {response.userResponse && response.userResponse.trim() ? response.userResponse : '[No response recorded]'}
+                            {response.userResponse && response.userResponse.trim() ? response.userResponse : '[No response]'}
                           </span>
                         </div>
                         <div className="ml-4 text-xs text-gray-500 dark:text-gray-400 mt-1">

@@ -104,24 +104,24 @@ export default function HRInterviewSimulatorPage() {
   // Phase 4: HR Evaluation state
   const [hrEvaluation, setHrEvaluation] = useState<any>(null)
   const [isReportSaved, setIsReportSaved] = useState(false); // New state for report saving status
+  const [interviewSessionId, setInterviewSessionId] = useState<string | null>(null); // New state for unique interview session ID
 
   // ---------------------------
   // Flow handlers (modified flow)
   // ---------------------------
   // New function to save the HR report via API
   const saveHRReport = useCallback(async () => {
-    if (!hrResumeAnalysis || interviewResponses.length === 0 || !hrEvaluation || isReportSaved) {
-      console.log("[Report Save] Skipping save because required data is missing or report is already saved.");
+    if (!hrResumeAnalysis || interviewResponses.length === 0 || !hrEvaluation || isReportSaved || !interviewSessionId) {
+      console.log("[Report Save] Skipping save because required data is missing, report is already saved, or no session ID.");
       return;
     }
 
     try {
-      const sessionId = `hr_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       const response = await fetch('/api/hr-reports', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          sessionId,
+          sessionId: interviewSessionId, // Use the generated interviewSessionId
           resumeAnalysis: hrResumeAnalysis,
           interviewResponses: interviewResponses,
           hrEvaluation: hrEvaluation,
@@ -138,7 +138,7 @@ export default function HRInterviewSimulatorPage() {
     } catch (error) {
       console.error('Error saving HR report:', error);
     }
-  }, [hrResumeAnalysis, interviewResponses, hrEvaluation, isReportSaved]);
+  }, [hrResumeAnalysis, interviewResponses, hrEvaluation, isReportSaved, interviewSessionId]);
 
   // Mode selection is now the first screen.
   // If pro -> go to AI model selection first (per new flow).
@@ -147,6 +147,11 @@ export default function HRInterviewSimulatorPage() {
     // Clear setup completion flag when starting new interview
     localStorage.removeItem("hr_interview_setup_completed")
     console.log("[Mode Selection] Cleared setup completion flag for new interview")
+
+    // Generate a unique session ID for this interview
+    const newSessionId = `hr_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+    setInterviewSessionId(newSessionId);
+    console.log("[Mode Selection] Generated new interview session ID:", newSessionId);
 
     setInterviewMode(mode)
 
@@ -330,9 +335,9 @@ export default function HRInterviewSimulatorPage() {
   const handleHRNextQuestion = async () => {
     // 1. Always save current response before potentially moving or finishing
     const currentResponse = interviewResponses[currentQuestionIndex];
-    if (currentResponse && currentResponse.hasResponse) {
+    if (currentResponse && currentResponse.hasResponse && interviewSessionId) {
       console.log(`[Question Navigation] Saving response for Qid ${currentResponse.Qid} before moving/finishing`);
-      localStorage.setItem("hr_interview_responses", JSON.stringify(interviewResponses));
+      localStorage.setItem(`hr_interview_responses_${interviewSessionId}`, JSON.stringify(interviewResponses));
     }
 
     // 2. If there are more questions (all 4 dynamic questions are already generated)
@@ -354,7 +359,9 @@ export default function HRInterviewSimulatorPage() {
       console.log(`[Report Generation] Summary: ${answeredCount}/${totalCount} questions answered`);
 
       // Save to localStorage
-      localStorage.setItem("hr_interview_responses", JSON.stringify(interviewResponses));
+      if (interviewSessionId) {
+        localStorage.setItem(`hr_interview_responses_${interviewSessionId}`, JSON.stringify(interviewResponses));
+      }
 
       // Generate HR evaluation immediately after interview completion
       let hrEvaluationLocal = null;
@@ -369,7 +376,7 @@ export default function HRInterviewSimulatorPage() {
             body: JSON.stringify({
               interviewResponses,
               resumeAnalysis: hrResumeAnalysis,
-              sessionId: `hr_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+              sessionId: interviewSessionId, // Use the generated interviewSessionId
             }),
           });
 
@@ -394,6 +401,12 @@ export default function HRInterviewSimulatorPage() {
         evaluationType: typeof hrEvaluationLocal,
       });
 
+      // Save the current interviewSessionId to sessionStorage for the report page
+      if (interviewSessionId) {
+        sessionStorage.setItem("currentInterviewSessionId", interviewSessionId);
+        console.log("[Report Transition] Saved currentInterviewSessionId to sessionStorage:", interviewSessionId);
+      }
+
       // Move to final report stage
       setHRInterviewStage("report");
       // Save the report
@@ -404,8 +417,8 @@ export default function HRInterviewSimulatorPage() {
   const handleStartNewInterview = () => {
     // Final save before resetting
     try {
-      if (interviewResponses.length > 0) {
-        localStorage.setItem("hr_interview_responses", JSON.stringify(interviewResponses))
+      if (interviewResponses.length > 0 && interviewSessionId) {
+        localStorage.setItem(`hr_interview_responses_${interviewSessionId}`, JSON.stringify(interviewResponses))
         console.log("[Reset] Final save completed before starting new interview")
       }
     } catch (e) {
@@ -415,6 +428,12 @@ export default function HRInterviewSimulatorPage() {
     // Clear setup completion flag for new interview
     localStorage.removeItem("hr_interview_setup_completed")
     console.log("[Reset] Cleared setup completion flag for new interview")
+
+    // Clear the specific interview responses from localStorage
+    if (interviewSessionId) {
+      localStorage.removeItem(`hr_interview_responses_${interviewSessionId}`);
+      console.log(`[Reset] Cleared responses for session ID: ${interviewSessionId}`);
+    }
 
     setHRResumeData(null)
     setHRResumeAnalysis(null)
@@ -433,13 +452,14 @@ export default function HRInterviewSimulatorPage() {
     setHrEvaluation(null)
     setDynamicQuestions([]);
     setAllQuestions([]);
+    setInterviewSessionId(null); // Clear the session ID
   }
 
   // ---------------------------
   // Response tracking (Phase 4)
   // ---------------------------
   const initializeResponses = useCallback((questionsToInitialize: HRQuestion[]) => {
-    if (questionsToInitialize.length > 0) {
+    if (questionsToInitialize.length > 0 && interviewSessionId) {
       const initialResponses = questionsToInitialize.map((question) => ({
         Qid: question.Qid,
         Rid: `R${question.Qid.substring(1)}`, // Generate Rid from Qid
@@ -457,9 +477,9 @@ export default function HRInterviewSimulatorPage() {
       );
       setInterviewResponses(initialResponses);
 
-      // Also try to load any existing responses from localStorage
+      // Also try to load any existing responses from localStorage for this session
       try {
-        const storedResponses = localStorage.getItem("hr_interview_responses");
+        const storedResponses = localStorage.getItem(`hr_interview_responses_${interviewSessionId}`);
         if (storedResponses) {
           const parsed = JSON.parse(storedResponses);
           if (Array.isArray(parsed) && parsed.length === questionsToInitialize.length) {
@@ -471,11 +491,11 @@ export default function HRInterviewSimulatorPage() {
         console.error("[Response Tracking] Failed to load from localStorage:", e);
       }
     }
-  }, []);
+  }, [interviewSessionId]);
 
   const updateResponse = useCallback(
     async (questionIndex: number, response: string) => {
-      if (questionIndex >= 0 && questionIndex < allQuestions.length) {
+      if (questionIndex >= 0 && questionIndex < allQuestions.length && interviewSessionId) {
         setResponseStatus((prev) => ({ ...prev, isSaving: true, saveError: null }));
 
         try {
@@ -493,7 +513,7 @@ export default function HRInterviewSimulatorPage() {
           });
 
           setInterviewResponses(updatedResponses);
-          localStorage.setItem("hr_interview_responses", JSON.stringify(updatedResponses));
+          localStorage.setItem(`hr_interview_responses_${interviewSessionId}`, JSON.stringify(updatedResponses));
 
           setResponseStatus((prev) => ({
             ...prev,
@@ -521,7 +541,7 @@ export default function HRInterviewSimulatorPage() {
         }
       }
     },
-    [allQuestions, interviewResponses],
+    [allQuestions, interviewResponses, interviewSessionId],
   );
 
   const getCurrentResponse = useCallback(
@@ -533,18 +553,18 @@ export default function HRInterviewSimulatorPage() {
 
   // Initialize responses when allQuestions are updated
   useEffect(() => {
-    if (hrInterviewStage === "questions-ready" && allQuestions.length > 0) {
+    if (hrInterviewStage === "questions-ready" && allQuestions.length > 0 && interviewSessionId) {
       initializeResponses(allQuestions);
       console.log("[Response Tracking] Initialized responses for all questions:", allQuestions.length);
     }
-  }, [hrInterviewStage, allQuestions.length, initializeResponses]);
+  }, [hrInterviewStage, allQuestions.length, initializeResponses, interviewSessionId]);
 
 
   // Recover responses from localStorage only once when starting interview
   useEffect(() => {
-    if (hrInterviewStage === "interview" && allQuestions.length > 0 && interviewResponses.length === 0) {
+    if (hrInterviewStage === "interview" && allQuestions.length > 0 && interviewResponses.length === 0 && interviewSessionId) {
       try {
-        const storedResponses = localStorage.getItem("hr_interview_responses");
+        const storedResponses = localStorage.getItem(`hr_interview_responses_${interviewSessionId}`);
         if (storedResponses) {
           const parsed = JSON.parse(storedResponses);
           if (Array.isArray(parsed) && parsed.length === allQuestions.length) {
@@ -556,12 +576,13 @@ export default function HRInterviewSimulatorPage() {
         console.error("[Response Recovery] Failed to recover from localStorage:", e);
       }
     }
-  }, [hrInterviewStage, allQuestions, interviewResponses.length]);
+  }, [hrInterviewStage, allQuestions, interviewResponses.length, interviewSessionId]);
 
   // Manual refresh function for responses
   const refreshResponsesFromStorage = useCallback(() => {
+    if (!interviewSessionId) return false;
     try {
-      const storedResponses = localStorage.getItem("hr_interview_responses");
+      const storedResponses = localStorage.getItem(`hr_interview_responses_${interviewSessionId}`);
       if (storedResponses) {
         const parsed = JSON.parse(storedResponses);
         if (Array.isArray(parsed) && parsed.length === allQuestions.length) {
@@ -574,11 +595,11 @@ export default function HRInterviewSimulatorPage() {
       console.error("[Manual Refresh] Failed to refresh from localStorage:", e);
     }
     return false;
-  }, [allQuestions.length]);
+  }, [allQuestions.length, interviewSessionId]);
 
   // Debug: Log only important changes
   useEffect(() => {
-    if (hrInterviewStage === "report") {
+    if (hrInterviewStage === "report" && interviewSessionId) {
       console.log("[Report Stage] Final responses state:", {
         totalResponses: interviewResponses.length,
         responsesWithContent: interviewResponses.filter((r) => r.hasResponse).length,
@@ -590,7 +611,7 @@ export default function HRInterviewSimulatorPage() {
         })),
       });
     }
-  }, [hrInterviewStage, interviewResponses]);
+  }, [hrInterviewStage, interviewResponses, interviewSessionId]);
 
   // Monitor currentQuestionIndex changes
   useEffect(() => {
@@ -863,8 +884,10 @@ export default function HRInterviewSimulatorPage() {
             // Phase 5: Final save and debug - Log data being passed to report
             // Ensure all responses are saved before generating report
             try {
-              localStorage.setItem('hr_interview_responses', JSON.stringify(interviewResponses))
-              console.log("[Report Stage] Final save completed")
+              if (interviewSessionId) {
+                localStorage.setItem(`hr_interview_responses_${interviewSessionId}`, JSON.stringify(interviewResponses))
+                console.log("[Report Stage] Final save completed")
+              }
             } catch (e) {
               console.error("[Report Stage] Final save failed:", e)
             }
@@ -888,6 +911,7 @@ export default function HRInterviewSimulatorPage() {
                   interviewResponses={interviewResponses}
                   onRefreshResponses={refreshResponsesFromStorage}
                   hrEvaluation={hrEvaluation}
+                  interviewSessionId={interviewSessionId} // Pass the session ID
                 />
               </div>
             )
