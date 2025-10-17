@@ -1,642 +1,147 @@
 {
-  "startedAt": "2025-10-17T10:20:20.484Z",
-  "frames": 21,
-  "fpsEstimate": 1.39,
-  "multiPersonWarnings": 2,
-  "eyeContactFrames": 17,
-  "offscreenFrames": 4,
-  "eyeContactPercent": 80.95,
-  "offscreenSeconds": 0.13,
-  "blinkCount": 1,
-  "blinkRatePerMin": 2.86,
+  "startedAt": "2025-10-17T11:03:12.372Z",
+  "frames": 39,
+  "fpsEstimate": 1.33,
+  "multiPersonWarnings": 0,
+  "eyeContactFrames": 0,
+  "offscreenFrames": 33,
+  "eyeContactPercent": 0,
+  "offscreenSeconds": 1.1,
+  "blinkCount": 3,
+  "blinkRatePerMin": 5.45,
   "blinkTimestamps": [
-    259464.09999999404
+    2819530.599999994,
+    2830072.099999994,
+    2837610.700000018
   ],
-  "longestOffscreenStreakFrames": 4,
-  "currentOffscreenStreakFrames": 4,
+  "longestOffscreenStreakFrames": 33,
+  "currentOffscreenStreakFrames": 33,
   "avgPupilRatio": 0,
   "emotionTopCounts": {
-    "sad": 18,
-    "angry": 1,
-    "neutral": 2
+    "sad": 14,
+    "neutral": 25
   },
   "lastEmotionsAvg5": {
-    "sad": 0.362,
-    "fear": 0.136,
-    "angry": 0.202,
-    "neutral": 0.458,
-    "happy": 0.24
+    "sad": 0.326,
+    "fear": 0.13,
+    "happy": 0.252,
+    "neutral": 0.28200000000000003
   },
   "totalHandActiveFrames": 0,
   "objectLabelCounts": {
-    "person": 21,
-    "chair": 3
+    "person": 39
   },
   "postureCounts": {
-    "centered": 21,
+    "centered": 33,
     "lean-left": 0,
     "lean-right": 0,
     "far": 0,
     "close": 0,
-    "ok": 0
+    "ok": 6
   },
   "nodCount": 0,
-  "shakeCount": 0,
+  "shakeCount": 2,
   "framesLog": [
     {
-      "ts": 243651.30000001192,
+      "ts": 2815405.900000006,
       "faceCount": 1,
       "bodyCount": 1,
       "handCount": 0,
       "objectCount": 1,
-      "faceScore": 1,
+      "faceScore": 0.56,
       "bbox": {
         "w": null,
         "h": null
       },
-      "yaw": 0.03668075738801849,
-      "pitch": 0.17016508334704286,
-      "roll": 0.018819175696302964,
-      "ear": 0.36961238542929087,
-      "eyeContact": true,
+      "yaw": 0.03697318822371676,
+      "pitch": 0.38540072236924094,
+      "roll": -0.38803593080863,
+      "ear": 0.26747668323805096,
+      "eyeContact": false,
       "leftIrisCenter": null,
       "rightIrisCenter": null,
       "emotionsRaw": {
-        "sad": 0.55,
-        "fear": 0.12,
-        "angry": 0.11,
-        "neutral": 0.11
+        "sad": 0.32,
+        "fear": 0.26,
+        "happy": 0.18,
+        "neutral": 0.18
       },
       "emotionsAvg5": {
-        "sad": 0.55,
-        "fear": 0.12,
-        "angry": 0.11,
-        "neutral": 0.11
+        "sad": 0.32,
+        "fear": 0.26,
+        "happy": 0.18,
+        "neutral": 0.18
       },
       "topEmotion": "sad",
-      "bodyScore": 0.55,
+      "bodyScore": 0.46,
       "postureHint": "centered",
       "handActivity": "none",
       "objects": [
         {
           "label": "person",
-          "score": 0.7
+          "score": 0.63
         }
       ],
-      "inferMs": 868.1999999880791
+      "inferMs": 930.0999999940395
     },
     {
-      "ts": 244527.90000000596,
+      "ts": 2816342.400000006,
+      "faceCount": 0,
+      "bodyCount": 1,
+      "handCount": 0,
+      "objectCount": 1,
+      "yaw": 0,
+      "pitch": 0,
+      "roll": 0,
+      "eyeContact": false,
+      "leftIrisCenter": null,
+      "rightIrisCenter": null,
+      "emotionsAvg5": {
+        "sad": 0.32,
+        "fear": 0.26,
+        "happy": 0.18,
+        "neutral": 0.18
+      },
+      "topEmotion": "sad",
+      "bodyScore": 0.48,
+      "postureHint": "ok",
+      "handActivity": "none",
+      "objects": [
+        {
+          "label": "person",
+          "score": 0.53
+        }
+      ],
+      "inferMs": 751.9000000059605
+    },
+    {
+      "ts": 2817099.599999994,
       "faceCount": 1,
       "bodyCount": 1,
       "handCount": 0,
       "objectCount": 1,
-      "faceScore": 1,
+      "faceScore": 0.16,
       "bbox": {
         "w": null,
         "h": null
       },
-      "yaw": 0.04574226815501049,
-      "pitch": 0.15722433486412,
-      "roll": 0.032455119176175495,
-      "ear": 0.35003176635661787,
-      "eyeContact": true,
+      "yaw": -0.016872505038070282,
+      "pitch": 0.35915034259509704,
+      "roll": -0.3979783737610793,
+      "ear": 0.1394279134704249,
+      "eyeContact": false,
       "leftIrisCenter": null,
       "rightIrisCenter": null,
       "emotionsRaw": {
-        "sad": 0.63,
-        "angry": 0.16,
-        "fear": 0.1
+        "sad": 0.54,
+        "fear": 0.2,
+        "neutral": 0.19
       },
       "emotionsAvg5": {
-        "sad": 0.5900000000000001,
-        "fear": 0.11,
-        "angry": 0.135,
-        "neutral": 0.11
-      },
-      "topEmotion": "sad",
-      "bodyScore": 0.56,
-      "postureHint": "centered",
-      "handActivity": "none",
-      "objects": [
-        {
-          "label": "person",
-          "score": 0.69
-        }
-      ],
-      "inferMs": 814.9000000059605
-    },
-    {
-      "ts": 245352,
-      "faceCount": 1,
-      "bodyCount": 1,
-      "handCount": 0,
-      "objectCount": 1,
-      "faceScore": 1,
-      "bbox": {
-        "w": null,
-        "h": null
-      },
-      "yaw": 0.0673761496766465,
-      "pitch": 0.14520546061935505,
-      "roll": 0.013862176076313532,
-      "ear": 0.3774505561075938,
-      "eyeContact": true,
-      "leftIrisCenter": null,
-      "rightIrisCenter": null,
-      "emotionsRaw": {
-        "sad": 0.75,
-        "fear": 0.13
-      },
-      "emotionsAvg5": {
-        "sad": 0.6433333333333334,
-        "fear": 0.11666666666666665,
-        "angry": 0.135,
-        "neutral": 0.11
-      },
-      "topEmotion": "sad",
-      "bodyScore": 0.61,
-      "postureHint": "centered",
-      "handActivity": "none",
-      "objects": [
-        {
-          "label": "person",
-          "score": 0.7
-        }
-      ],
-      "inferMs": 740.8000000119209
-    },
-    {
-      "ts": 246101.40000000596,
-      "faceCount": 1,
-      "bodyCount": 1,
-      "handCount": 0,
-      "objectCount": 1,
-      "faceScore": 1,
-      "bbox": {
-        "w": null,
-        "h": null
-      },
-      "yaw": 0.06882681818219191,
-      "pitch": 0.14631676064196333,
-      "roll": 0.02036044067995756,
-      "ear": 0.37990301789146397,
-      "eyeContact": true,
-      "leftIrisCenter": null,
-      "rightIrisCenter": null,
-      "emotionsRaw": {
-        "sad": 0.37,
-        "angry": 0.33,
-        "fear": 0.15
-      },
-      "emotionsAvg5": {
-        "sad": 0.5750000000000001,
-        "fear": 0.125,
-        "angry": 0.20000000000000004,
-        "neutral": 0.11
-      },
-      "topEmotion": "sad",
-      "bodyScore": 0.62,
-      "postureHint": "centered",
-      "handActivity": "none",
-      "objects": [
-        {
-          "label": "person",
-          "score": 0.68
-        }
-      ],
-      "inferMs": 893.0999999940395
-    },
-    {
-      "ts": 247001.5,
-      "faceCount": 1,
-      "bodyCount": 1,
-      "handCount": 0,
-      "objectCount": 1,
-      "faceScore": 1,
-      "bbox": {
-        "w": null,
-        "h": null
-      },
-      "yaw": 0.07123909876905406,
-      "pitch": 0.14751497302911928,
-      "roll": 0.023830172017202222,
-      "ear": 0.373473339307193,
-      "eyeContact": true,
-      "leftIrisCenter": null,
-      "rightIrisCenter": null,
-      "emotionsRaw": {
-        "angry": 0.5,
-        "sad": 0.2,
-        "fear": 0.13
-      },
-      "emotionsAvg5": {
-        "sad": 0.5000000000000001,
-        "fear": 0.126,
-        "angry": 0.275,
-        "neutral": 0.11
-      },
-      "topEmotion": "sad",
-      "bodyScore": 0.59,
-      "postureHint": "centered",
-      "handActivity": "none",
-      "objects": [
-        {
-          "label": "person",
-          "score": 0.69
-        }
-      ],
-      "inferMs": 1478.7000000178814
-    },
-    {
-      "ts": 248486.30000001192,
-      "faceCount": 1,
-      "bodyCount": 1,
-      "handCount": 0,
-      "objectCount": 1,
-      "faceScore": 1,
-      "bbox": {
-        "w": null,
-        "h": null
-      },
-      "yaw": 0.08353315724480753,
-      "pitch": 0.11913190662621964,
-      "roll": 0.034284045977139944,
-      "ear": 0.3724410764858252,
-      "eyeContact": true,
-      "leftIrisCenter": null,
-      "rightIrisCenter": null,
-      "emotionsRaw": {
-        "sad": 0.73,
-        "angry": 0.16
-      },
-      "emotionsAvg5": {
-        "sad": 0.5359999999999999,
-        "fear": 0.126,
-        "angry": 0.252,
-        "neutral": 0.11
-      },
-      "topEmotion": "sad",
-      "bodyScore": 0.59,
-      "postureHint": "centered",
-      "handActivity": "none",
-      "objects": [
-        {
-          "label": "person",
-          "score": 0.68
-        }
-      ],
-      "inferMs": 716.5999999940395
-    },
-    {
-      "ts": 249207.59999999404,
-      "faceCount": 2,
-      "bodyCount": 1,
-      "handCount": 0,
-      "objectCount": 1,
-      "faceScore": 1,
-      "bbox": {
-        "w": null,
-        "h": null
-      },
-      "yaw": 0.08797666694771458,
-      "pitch": 0.16801345515009614,
-      "roll": 0.026866962199915523,
-      "ear": 0.3824987993030581,
-      "eyeContact": true,
-      "leftIrisCenter": null,
-      "rightIrisCenter": null,
-      "emotionsRaw": {
-        "angry": 0.42,
-        "sad": 0.36,
-        "fear": 0.12
-      },
-      "emotionsAvg5": {
-        "sad": 0.48199999999999993,
-        "fear": 0.126,
-        "angry": 0.31399999999999995,
-        "neutral": 0.11
-      },
-      "topEmotion": "sad",
-      "bodyScore": 0.59,
-      "postureHint": "centered",
-      "handActivity": "none",
-      "objects": [
-        {
-          "label": "person",
-          "score": 0.7
-        }
-      ],
-      "inferMs": 899.8000000119209
-    },
-    {
-      "ts": 250113.90000000596,
-      "faceCount": 2,
-      "bodyCount": 1,
-      "handCount": 0,
-      "objectCount": 1,
-      "faceScore": 1,
-      "bbox": {
-        "w": null,
-        "h": null
-      },
-      "yaw": 0.07156756333332483,
-      "pitch": 0.13439460469661046,
-      "roll": 0.030378534582281798,
-      "ear": 0.38306486449372834,
-      "eyeContact": true,
-      "leftIrisCenter": null,
-      "rightIrisCenter": null,
-      "emotionsRaw": {
-        "angry": 0.61,
-        "sad": 0.21
-      },
-      "emotionsAvg5": {
-        "sad": 0.374,
-        "fear": 0.126,
-        "angry": 0.404,
-        "neutral": 0.11
-      },
-      "topEmotion": "angry",
-      "bodyScore": 0.59,
-      "postureHint": "centered",
-      "handActivity": "none",
-      "objects": [
-        {
-          "label": "person",
-          "score": 0.68
-        }
-      ],
-      "inferMs": 876.4000000059605
-    },
-    {
-      "ts": 250997,
-      "faceCount": 1,
-      "bodyCount": 1,
-      "handCount": 0,
-      "objectCount": 1,
-      "faceScore": 1,
-      "bbox": {
-        "w": null,
-        "h": null
-      },
-      "yaw": 0.11540950584234146,
-      "pitch": 0.16964977229852402,
-      "roll": -0.008381129935308613,
-      "ear": 0.3745250411364751,
-      "eyeContact": true,
-      "leftIrisCenter": null,
-      "rightIrisCenter": null,
-      "emotionsRaw": {
-        "sad": 0.71,
-        "fear": 0.14,
-        "angry": 0.1
-      },
-      "emotionsAvg5": {
-        "sad": 0.442,
-        "fear": 0.134,
-        "angry": 0.358,
-        "neutral": 0.11
-      },
-      "topEmotion": "sad",
-      "bodyScore": 0.61,
-      "postureHint": "centered",
-      "handActivity": "none",
-      "objects": [
-        {
-          "label": "person",
-          "score": 0.71
-        }
-      ],
-      "inferMs": 928.2000000178814
-    },
-    {
-      "ts": 251931,
-      "faceCount": 1,
-      "bodyCount": 1,
-      "handCount": 0,
-      "objectCount": 1,
-      "faceScore": 1,
-      "bbox": {
-        "w": null,
-        "h": null
-      },
-      "yaw": 0.135821214784228,
-      "pitch": 0.22236103023884538,
-      "roll": -0.08069342596136322,
-      "ear": 0.37786949470538234,
-      "eyeContact": true,
-      "leftIrisCenter": null,
-      "rightIrisCenter": null,
-      "emotionsRaw": {
-        "sad": 0.5,
-        "angry": 0.22,
-        "fear": 0.15
-      },
-      "emotionsAvg5": {
-        "sad": 0.502,
-        "fear": 0.138,
-        "angry": 0.302,
-        "neutral": 0.11
-      },
-      "topEmotion": "sad",
-      "bodyScore": 0.64,
-      "postureHint": "centered",
-      "handActivity": "none",
-      "objects": [
-        {
-          "label": "person",
-          "score": 0.72
-        }
-      ],
-      "inferMs": 843.9000000059605
-    },
-    {
-      "ts": 252783.5,
-      "faceCount": 2,
-      "bodyCount": 1,
-      "handCount": 0,
-      "objectCount": 1,
-      "faceScore": 1,
-      "bbox": {
-        "w": null,
-        "h": null
-      },
-      "yaw": 0.09943862333057904,
-      "pitch": 0.2141779581029813,
-      "roll": -0.03807393613862866,
-      "ear": 0.37372663844471904,
-      "eyeContact": true,
-      "leftIrisCenter": null,
-      "rightIrisCenter": null,
-      "emotionsRaw": {
-        "sad": 0.63,
-        "angry": 0.24
-      },
-      "emotionsAvg5": {
-        "sad": 0.48199999999999993,
-        "fear": 0.138,
-        "angry": 0.318,
-        "neutral": 0.11
-      },
-      "topEmotion": "sad",
-      "bodyScore": 0.51,
-      "postureHint": "centered",
-      "handActivity": "none",
-      "objects": [
-        {
-          "label": "person",
-          "score": 0.71
-        }
-      ],
-      "inferMs": 998.8000000119209
-    },
-    {
-      "ts": 253788.80000001192,
-      "faceCount": 1,
-      "bodyCount": 1,
-      "handCount": 0,
-      "objectCount": 1,
-      "faceScore": 1,
-      "bbox": {
-        "w": null,
-        "h": null
-      },
-      "yaw": 0.09828666750301923,
-      "pitch": 0.19063890591409552,
-      "roll": -0.039987503098138706,
-      "ear": 0.37732020401636013,
-      "eyeContact": true,
-      "leftIrisCenter": null,
-      "rightIrisCenter": null,
-      "emotionsRaw": {
-        "sad": 0.71,
-        "neutral": 0.17
-      },
-      "emotionsAvg5": {
-        "sad": 0.5519999999999999,
-        "fear": 0.138,
-        "angry": 0.318,
-        "neutral": 0.14
-      },
-      "topEmotion": "sad",
-      "bodyScore": 0.53,
-      "postureHint": "centered",
-      "handActivity": "none",
-      "objects": [
-        {
-          "label": "person",
-          "score": 0.7
-        }
-      ],
-      "inferMs": 733.2999999821186
-    },
-    {
-      "ts": 254530.70000001788,
-      "faceCount": 1,
-      "bodyCount": 1,
-      "handCount": 0,
-      "objectCount": 1,
-      "faceScore": 1,
-      "bbox": {
-        "w": null,
-        "h": null
-      },
-      "yaw": 0.10774332813384163,
-      "pitch": 0.20137143757611517,
-      "roll": -0.043444699194648086,
-      "ear": 0.4020217111184154,
-      "eyeContact": true,
-      "leftIrisCenter": null,
-      "rightIrisCenter": null,
-      "emotionsRaw": {
-        "sad": 0.78
-      },
-      "emotionsAvg5": {
-        "sad": 0.666,
-        "fear": 0.138,
-        "angry": 0.318,
-        "neutral": 0.14
-      },
-      "topEmotion": "sad",
-      "bodyScore": 0.52,
-      "postureHint": "centered",
-      "handActivity": "none",
-      "objects": [
-        {
-          "label": "person",
-          "score": 0.7
-        }
-      ],
-      "inferMs": 1168.0999999940395
-    },
-    {
-      "ts": 255705.40000000596,
-      "faceCount": 1,
-      "bodyCount": 1,
-      "handCount": 0,
-      "objectCount": 1,
-      "faceScore": 1,
-      "bbox": {
-        "w": null,
-        "h": null
-      },
-      "yaw": 0.10776330098416595,
-      "pitch": 0.20133036514431404,
-      "roll": -0.03515786514036028,
-      "ear": 0.3441549185583982,
-      "eyeContact": true,
-      "leftIrisCenter": null,
-      "rightIrisCenter": null,
-      "emotionsRaw": {
-        "sad": 0.66,
-        "angry": 0.15,
-        "fear": 0.14
-      },
-      "emotionsAvg5": {
-        "sad": 0.656,
-        "fear": 0.136,
-        "angry": 0.26399999999999996,
-        "neutral": 0.14
-      },
-      "topEmotion": "sad",
-      "bodyScore": 0.52,
-      "postureHint": "centered",
-      "handActivity": "none",
-      "objects": [
-        {
-          "label": "person",
-          "score": 0.7
-        }
-      ],
-      "inferMs": 735.6999999880791
-    },
-    {
-      "ts": 256447.30000001192,
-      "faceCount": 1,
-      "bodyCount": 1,
-      "handCount": 0,
-      "objectCount": 1,
-      "faceScore": 1,
-      "bbox": {
-        "w": null,
-        "h": null
-      },
-      "yaw": 0.09205799996499642,
-      "pitch": 0.19263870550063508,
-      "roll": -0.0366441232086522,
-      "ear": 0.3555150406732943,
-      "eyeContact": true,
-      "leftIrisCenter": null,
-      "rightIrisCenter": null,
-      "emotionsRaw": {
-        "sad": 0.9
-      },
-      "emotionsAvg5": {
-        "sad": 0.736,
-        "fear": 0.136,
-        "angry": 0.26399999999999996,
-        "neutral": 0.14
+        "sad": 0.43000000000000005,
+        "fear": 0.23,
+        "happy": 0.18,
+        "neutral": 0.185
       },
       "topEmotion": "sad",
       "bodyScore": 0.49,
@@ -645,81 +150,69 @@
       "objects": [
         {
           "label": "person",
-          "score": 0.7
+          "score": 0.53
         }
       ],
-      "inferMs": 890.7999999821186
+      "inferMs": 827.9000000059605
     },
     {
-      "ts": 257349.40000000596,
-      "faceCount": 2,
+      "ts": 2817932.800000012,
+      "faceCount": 0,
       "bodyCount": 1,
       "handCount": 0,
       "objectCount": 1,
-      "faceScore": 1,
-      "bbox": {
-        "w": null,
-        "h": null
-      },
-      "yaw": 0.028798412670827417,
-      "pitch": 0.24161710220905497,
-      "roll": -0.008428205946299476,
-      "ear": 0.07565341714576405,
-      "eyeContact": true,
+      "yaw": 0,
+      "pitch": 0,
+      "roll": 0,
+      "eyeContact": false,
       "leftIrisCenter": null,
       "rightIrisCenter": null,
-      "emotionsRaw": {
-        "neutral": 0.52,
-        "angry": 0.2,
-        "sad": 0.2
-      },
       "emotionsAvg5": {
-        "sad": 0.65,
-        "fear": 0.136,
-        "angry": 0.18200000000000002,
-        "neutral": 0.26666666666666666
+        "sad": 0.43000000000000005,
+        "fear": 0.23,
+        "happy": 0.18,
+        "neutral": 0.185
       },
       "topEmotion": "sad",
-      "bodyScore": 0.6,
-      "postureHint": "centered",
+      "bodyScore": 0.5,
+      "postureHint": "ok",
       "handActivity": "none",
       "objects": [
         {
           "label": "person",
-          "score": 0.66
+          "score": 0.5
         }
       ],
-      "inferMs": 966
+      "inferMs": 683.0999999940395
     },
     {
-      "ts": 258321.70000001788,
-      "faceCount": 2,
+      "ts": 2818624.099999994,
+      "faceCount": 1,
       "bodyCount": 1,
       "handCount": 0,
       "objectCount": 1,
-      "faceScore": 1,
+      "faceScore": 0.09,
       "bbox": {
         "w": null,
         "h": null
       },
-      "yaw": 0.08393210527582314,
-      "pitch": 0.25698769347835904,
-      "roll": -0.04288522570531003,
-      "ear": 0.07266521965222876,
+      "yaw": 0.1064660525573629,
+      "pitch": 0.421239737006634,
+      "roll": -0.39369640351101176,
+      "ear": 0.15802703584872052,
       "blinkStarted": true,
-      "eyeContact": true,
+      "eyeContact": false,
       "leftIrisCenter": null,
       "rightIrisCenter": null,
       "emotionsRaw": {
-        "neutral": 0.45,
-        "sad": 0.31,
-        "angry": 0.2
+        "neutral": 0.57,
+        "sad": 0.3
       },
       "emotionsAvg5": {
-        "sad": 0.5700000000000001,
-        "fear": 0.136,
-        "angry": 0.202,
-        "neutral": 0.3125
+        "sad": 0.3866666666666667,
+        "fear": 0.23,
+        "happy": 0.18,
+        "neutral": 0.3133333333333333
       },
       "topEmotion": "sad",
       "bodyScore": 0.48,
@@ -728,187 +221,1358 @@
       "objects": [
         {
           "label": "person",
-          "score": 0.67
+          "score": 0.53
         }
       ],
-      "inferMs": 1142.3999999761581
+      "inferMs": 906.6000000238419
     },
     {
-      "ts": 259469.59999999404,
+      "ts": 2819536.800000012,
       "faceCount": 1,
       "bodyCount": 1,
       "handCount": 0,
-      "objectCount": 2,
-      "faceScore": 1,
+      "objectCount": 1,
+      "faceScore": 0.35,
       "bbox": {
         "w": null,
         "h": null
       },
-      "yaw": 0.08004099546545156,
-      "pitch": 0.26738638669713327,
-      "roll": -0.036566838211655114,
-      "ear": 0.3376517103159282,
+      "yaw": -0.016709012108641865,
+      "pitch": 0.3242293109434176,
+      "roll": -0.3322739569369948,
+      "ear": 0.19963101907899455,
       "eyeContact": false,
       "leftIrisCenter": null,
       "rightIrisCenter": null,
+      "shakeCount": 1,
       "emotionsRaw": {
-        "neutral": 0.53,
-        "sad": 0.32
+        "sad": 0.34,
+        "neutral": 0.3,
+        "fear": 0.24
       },
       "emotionsAvg5": {
-        "sad": 0.4779999999999999,
-        "fear": 0.136,
-        "angry": 0.202,
-        "neutral": 0.356
+        "sad": 0.37500000000000006,
+        "fear": 0.2333333333333333,
+        "happy": 0.18,
+        "neutral": 0.31
       },
       "topEmotion": "sad",
-      "bodyScore": 0.5,
+      "bodyScore": 0.49,
       "postureHint": "centered",
       "handActivity": "none",
       "objects": [
         {
           "label": "person",
-          "score": 0.73
-        },
-        {
-          "label": "chair",
-          "score": 0.3
+          "score": 0.52
         }
       ],
-      "inferMs": 753.6000000238419
+      "inferMs": 752.4000000059605
     },
     {
-      "ts": 260228.70000001788,
+      "ts": 2820295.300000012,
       "faceCount": 1,
       "bodyCount": 1,
       "handCount": 0,
-      "objectCount": 2,
-      "faceScore": 1,
+      "objectCount": 1,
+      "faceScore": 0.24,
       "bbox": {
         "w": null,
         "h": null
       },
-      "yaw": 0.10288548352323425,
-      "pitch": 0.28767031999192766,
-      "roll": -0.04602135608830741,
-      "ear": 0.330642078565034,
+      "yaw": 0.02705421091329362,
+      "pitch": 0.3119817385210063,
+      "roll": -0.34764712011638027,
+      "ear": 0.1741036582299842,
       "eyeContact": false,
       "leftIrisCenter": null,
       "rightIrisCenter": null,
       "emotionsRaw": {
-        "sad": 0.54,
-        "neutral": 0.38
+        "neutral": 0.48,
+        "sad": 0.36
       },
       "emotionsAvg5": {
-        "sad": 0.45400000000000007,
-        "fear": 0.136,
-        "angry": 0.202,
+        "sad": 0.37200000000000005,
+        "fear": 0.2333333333333333,
+        "happy": 0.18,
+        "neutral": 0.344
+      },
+      "topEmotion": "sad",
+      "bodyScore": 0.52,
+      "postureHint": "centered",
+      "handActivity": "none",
+      "objects": [
+        {
+          "label": "person",
+          "score": 0.54
+        }
+      ],
+      "inferMs": 857.5999999940395
+    },
+    {
+      "ts": 2821162.099999994,
+      "faceCount": 1,
+      "bodyCount": 1,
+      "handCount": 0,
+      "objectCount": 1,
+      "faceScore": 0.36,
+      "bbox": {
+        "w": null,
+        "h": null
+      },
+      "yaw": 0.002714325866652761,
+      "pitch": 0.34774238140643926,
+      "roll": -0.3100304017271888,
+      "ear": 0.20214217538482332,
+      "eyeContact": false,
+      "leftIrisCenter": null,
+      "rightIrisCenter": null,
+      "emotionsRaw": {
+        "neutral": 0.41,
+        "sad": 0.34,
+        "fear": 0.14
+      },
+      "emotionsAvg5": {
+        "sad": 0.376,
+        "fear": 0.21,
+        "happy": 0.18,
+        "neutral": 0.39
+      },
+      "topEmotion": "neutral",
+      "bodyScore": 0.46,
+      "postureHint": "centered",
+      "handActivity": "none",
+      "objects": [
+        {
+          "label": "person",
+          "score": 0.52
+        }
+      ],
+      "inferMs": 890.2000000178814
+    },
+    {
+      "ts": 2822061.400000006,
+      "faceCount": 1,
+      "bodyCount": 1,
+      "handCount": 0,
+      "objectCount": 1,
+      "faceScore": 0.18,
+      "bbox": {
+        "w": null,
+        "h": null
+      },
+      "yaw": -0.030031318847879674,
+      "pitch": 0.3724184412844558,
+      "roll": -0.2922516660969832,
+      "ear": 0.2000909126082075,
+      "eyeContact": false,
+      "leftIrisCenter": null,
+      "rightIrisCenter": null,
+      "emotionsRaw": {
+        "neutral": 0.57,
+        "sad": 0.3
+      },
+      "emotionsAvg5": {
+        "sad": 0.328,
+        "fear": 0.21,
+        "happy": 0.18,
+        "neutral": 0.4659999999999999
+      },
+      "topEmotion": "neutral",
+      "bodyScore": 0.45,
+      "postureHint": "centered",
+      "handActivity": "none",
+      "objects": [
+        {
+          "label": "person",
+          "score": 0.54
+        }
+      ],
+      "inferMs": 764.5
+    },
+    {
+      "ts": 2822832.700000018,
+      "faceCount": 1,
+      "bodyCount": 1,
+      "handCount": 0,
+      "objectCount": 1,
+      "faceScore": 0.24,
+      "bbox": {
+        "w": null,
+        "h": null
+      },
+      "yaw": 0.11616437311280368,
+      "pitch": 0.4475961076275214,
+      "roll": -0.4048967173848965,
+      "ear": 0.17451182556245148,
+      "eyeContact": false,
+      "leftIrisCenter": null,
+      "rightIrisCenter": null,
+      "emotionsRaw": {
+        "sad": 0.41,
+        "neutral": 0.33,
+        "happy": 0.13
+      },
+      "emotionsAvg5": {
+        "sad": 0.35,
+        "fear": 0.21,
+        "happy": 0.155,
+        "neutral": 0.418
+      },
+      "topEmotion": "neutral",
+      "bodyScore": 0.52,
+      "postureHint": "centered",
+      "handActivity": "none",
+      "objects": [
+        {
+          "label": "person",
+          "score": 0.52
+        }
+      ],
+      "inferMs": 740
+    },
+    {
+      "ts": 2823578.200000018,
+      "faceCount": 1,
+      "bodyCount": 1,
+      "handCount": 0,
+      "objectCount": 1,
+      "faceScore": 0.09,
+      "bbox": {
+        "w": null,
+        "h": null
+      },
+      "yaw": 0.042864554718711596,
+      "pitch": 0.3385480713405694,
+      "roll": -0.3444510923883049,
+      "ear": 0.1551952689065849,
+      "eyeContact": false,
+      "leftIrisCenter": null,
+      "rightIrisCenter": null,
+      "emotionsRaw": {
+        "neutral": 0.68,
+        "sad": 0.17
+      },
+      "emotionsAvg5": {
+        "sad": 0.31599999999999995,
+        "fear": 0.21,
+        "happy": 0.155,
+        "neutral": 0.49400000000000005
+      },
+      "topEmotion": "neutral",
+      "bodyScore": 0.49,
+      "postureHint": "centered",
+      "handActivity": "none",
+      "objects": [
+        {
+          "label": "person",
+          "score": 0.54
+        }
+      ],
+      "inferMs": 865
+    },
+    {
+      "ts": 2824449.200000018,
+      "faceCount": 1,
+      "bodyCount": 1,
+      "handCount": 0,
+      "objectCount": 1,
+      "faceScore": 0.45,
+      "bbox": {
+        "w": null,
+        "h": null
+      },
+      "yaw": -0.002316476431880245,
+      "pitch": 0.35806063707294467,
+      "roll": -0.3108749815516468,
+      "ear": 0.1894647309434584,
+      "eyeContact": false,
+      "leftIrisCenter": null,
+      "rightIrisCenter": null,
+      "emotionsRaw": {
+        "neutral": 0.55,
+        "sad": 0.23,
+        "fear": 0.1
+      },
+      "emotionsAvg5": {
+        "sad": 0.29,
+        "fear": 0.188,
+        "happy": 0.155,
+        "neutral": 0.508
+      },
+      "topEmotion": "neutral",
+      "bodyScore": 0.46,
+      "postureHint": "centered",
+      "handActivity": "none",
+      "objects": [
+        {
+          "label": "person",
+          "score": 0.54
+        }
+      ],
+      "inferMs": 735.3999999761581
+    },
+    {
+      "ts": 2825190.900000006,
+      "faceCount": 1,
+      "bodyCount": 1,
+      "handCount": 0,
+      "objectCount": 1,
+      "faceScore": 0.38,
+      "bbox": {
+        "w": null,
+        "h": null
+      },
+      "yaw": 0.08028855675031513,
+      "pitch": 0.43564271115747427,
+      "roll": -0.39742551997472264,
+      "ear": 0.17307172133206877,
+      "eyeContact": false,
+      "leftIrisCenter": null,
+      "rightIrisCenter": null,
+      "emotionsRaw": {
+        "sad": 0.44,
+        "neutral": 0.4
+      },
+      "emotionsAvg5": {
+        "sad": 0.31,
+        "fear": 0.188,
+        "happy": 0.155,
+        "neutral": 0.506
+      },
+      "topEmotion": "neutral",
+      "bodyScore": 0.42,
+      "postureHint": "centered",
+      "handActivity": "none",
+      "objects": [
+        {
+          "label": "person",
+          "score": 0.55
+        }
+      ],
+      "inferMs": 770.1999999880791
+    },
+    {
+      "ts": 2825966.300000012,
+      "faceCount": 1,
+      "bodyCount": 1,
+      "handCount": 0,
+      "objectCount": 1,
+      "faceScore": 0.11,
+      "bbox": {
+        "w": null,
+        "h": null
+      },
+      "yaw": 0.004828572564513899,
+      "pitch": 0.37038245082456955,
+      "roll": -0.37129003159767443,
+      "ear": 0.28272953912896565,
+      "eyeContact": false,
+      "leftIrisCenter": null,
+      "rightIrisCenter": null,
+      "emotionsRaw": {
+        "sad": 0.52,
+        "fear": 0.23,
+        "happy": 0.11
+      },
+      "emotionsAvg5": {
+        "sad": 0.354,
+        "fear": 0.182,
+        "happy": 0.13999999999999999,
+        "neutral": 0.506
+      },
+      "topEmotion": "neutral",
+      "bodyScore": 0.39,
+      "postureHint": "centered",
+      "handActivity": "none",
+      "objects": [
+        {
+          "label": "person",
+          "score": 0.58
+        }
+      ],
+      "inferMs": 895.4000000059605
+    },
+    {
+      "ts": 2826870.200000018,
+      "faceCount": 1,
+      "bodyCount": 1,
+      "handCount": 0,
+      "objectCount": 1,
+      "faceScore": 0.08,
+      "bbox": {
+        "w": null,
+        "h": null
+      },
+      "yaw": -0.052975714757891694,
+      "pitch": 0.37112277988254583,
+      "roll": -0.3257619502656972,
+      "ear": 0.2257528238655173,
+      "eyeContact": false,
+      "leftIrisCenter": null,
+      "rightIrisCenter": null,
+      "emotionsRaw": {
+        "neutral": 0.5,
+        "sad": 0.21,
+        "fear": 0.14
+      },
+      "emotionsAvg5": {
+        "sad": 0.314,
+        "fear": 0.16999999999999998,
+        "happy": 0.13999999999999999,
+        "neutral": 0.492
+      },
+      "topEmotion": "neutral",
+      "bodyScore": 0.46,
+      "postureHint": "centered",
+      "handActivity": "none",
+      "objects": [
+        {
+          "label": "person",
+          "score": 0.6
+        }
+      ],
+      "inferMs": 879.2999999821186
+    },
+    {
+      "ts": 2827758.800000012,
+      "faceCount": 0,
+      "bodyCount": 1,
+      "handCount": 0,
+      "objectCount": 1,
+      "yaw": 0,
+      "pitch": 0,
+      "roll": 0,
+      "eyeContact": false,
+      "leftIrisCenter": null,
+      "rightIrisCenter": null,
+      "emotionsAvg5": {
+        "sad": 0.314,
+        "fear": 0.16999999999999998,
+        "happy": 0.13999999999999999,
+        "neutral": 0.492
+      },
+      "topEmotion": "neutral",
+      "bodyScore": 0.46,
+      "postureHint": "ok",
+      "handActivity": "none",
+      "objects": [
+        {
+          "label": "person",
+          "score": 0.55
+        }
+      ],
+      "inferMs": 706.7999999821186
+    },
+    {
+      "ts": 2828470.700000018,
+      "faceCount": 1,
+      "bodyCount": 1,
+      "handCount": 0,
+      "objectCount": 1,
+      "faceScore": 0.41,
+      "bbox": {
+        "w": null,
+        "h": null
+      },
+      "yaw": 0.010469819618475852,
+      "pitch": 0.32892975681677683,
+      "roll": -0.3346975120589504,
+      "ear": 0.1796905640368685,
+      "eyeContact": false,
+      "leftIrisCenter": null,
+      "rightIrisCenter": null,
+      "emotionsRaw": {
+        "sad": 0.53,
+        "neutral": 0.24
+      },
+      "emotionsAvg5": {
+        "sad": 0.386,
+        "fear": 0.16999999999999998,
+        "happy": 0.13999999999999999,
+        "neutral": 0.47400000000000003
+      },
+      "topEmotion": "neutral",
+      "bodyScore": 0.42,
+      "postureHint": "centered",
+      "handActivity": "none",
+      "objects": [
+        {
+          "label": "person",
+          "score": 0.56
+        }
+      ],
+      "inferMs": 843.2999999821186
+    },
+    {
+      "ts": 2829332.5,
+      "faceCount": 1,
+      "bodyCount": 1,
+      "handCount": 0,
+      "objectCount": 1,
+      "faceScore": 0.18,
+      "bbox": {
+        "w": null,
+        "h": null
+      },
+      "yaw": 0.07477926396982755,
+      "pitch": 0.3275243671958757,
+      "roll": -0.3551392978623794,
+      "ear": 0.17502499583605127,
+      "blinkStarted": true,
+      "eyeContact": false,
+      "leftIrisCenter": null,
+      "rightIrisCenter": null,
+      "emotionsRaw": {
+        "sad": 0.4,
+        "neutral": 0.39,
+        "fear": 0.12
+      },
+      "emotionsAvg5": {
+        "sad": 0.42000000000000004,
+        "fear": 0.14600000000000002,
+        "happy": 0.13999999999999999,
+        "neutral": 0.41600000000000004
+      },
+      "topEmotion": "sad",
+      "bodyScore": 0.47,
+      "postureHint": "centered",
+      "handActivity": "none",
+      "objects": [
+        {
+          "label": "person",
+          "score": 0.57
+        }
+      ],
+      "inferMs": 739.5999999940395
+    },
+    {
+      "ts": 2830078.599999994,
+      "faceCount": 1,
+      "bodyCount": 1,
+      "handCount": 0,
+      "objectCount": 1,
+      "faceScore": 0.28,
+      "bbox": {
+        "w": null,
+        "h": null
+      },
+      "yaw": 0.03186347940374159,
+      "pitch": 0.3401008268521541,
+      "roll": -0.3272556120063914,
+      "ear": 0.21389732430865438,
+      "eyeContact": false,
+      "leftIrisCenter": null,
+      "rightIrisCenter": null,
+      "emotionsRaw": {
+        "neutral": 0.52,
+        "sad": 0.22,
+        "fear": 0.18
+      },
+      "emotionsAvg5": {
+        "sad": 0.376,
+        "fear": 0.154,
+        "happy": 0.13999999999999999,
         "neutral": 0.41000000000000003
       },
-      "topEmotion": "sad",
-      "bodyScore": 0.58,
+      "topEmotion": "neutral",
+      "bodyScore": 0.46,
       "postureHint": "centered",
       "handActivity": "none",
       "objects": [
         {
           "label": "person",
-          "score": 0.69
-        },
-        {
-          "label": "chair",
-          "score": 0.34
+          "score": 0.6
         }
       ],
-      "inferMs": 995.6999999880791
+      "inferMs": 848.1000000238419
     },
     {
-      "ts": 261230.40000000596,
+      "ts": 2830932.800000012,
       "faceCount": 1,
       "bodyCount": 1,
       "handCount": 0,
-      "objectCount": 2,
-      "faceScore": 1,
+      "objectCount": 1,
+      "faceScore": 0.17,
       "bbox": {
         "w": null,
         "h": null
       },
-      "yaw": -0.04791711553230859,
-      "pitch": 0.2973355991986113,
-      "roll": 0.007927864430777556,
-      "ear": 0.3347400923297885,
+      "yaw": 0.022844668211231038,
+      "pitch": 0.2941204393907891,
+      "roll": -0.34085480898142384,
+      "ear": 0.23470650841046375,
       "eyeContact": false,
       "leftIrisCenter": null,
       "rightIrisCenter": null,
       "emotionsRaw": {
-        "neutral": 0.45,
-        "sad": 0.43
+        "neutral": 0.46,
+        "sad": 0.35,
+        "fear": 0.1
       },
       "emotionsAvg5": {
-        "sad": 0.36,
-        "fear": 0.136,
-        "angry": 0.202,
+        "sad": 0.34199999999999997,
+        "fear": 0.15399999999999997,
+        "happy": 0.13999999999999999,
+        "neutral": 0.422
+      },
+      "topEmotion": "neutral",
+      "bodyScore": 0.38,
+      "postureHint": "centered",
+      "handActivity": "none",
+      "objects": [
+        {
+          "label": "person",
+          "score": 0.59
+        }
+      ],
+      "inferMs": 875
+    },
+    {
+      "ts": 2831819.200000018,
+      "faceCount": 1,
+      "bodyCount": 1,
+      "handCount": 0,
+      "objectCount": 1,
+      "faceScore": 0.17,
+      "bbox": {
+        "w": null,
+        "h": null
+      },
+      "yaw": 0.11893475900261759,
+      "pitch": 0.41439671744931705,
+      "roll": -0.4124134301822575,
+      "ear": 0.1484985826340812,
+      "eyeContact": false,
+      "leftIrisCenter": null,
+      "rightIrisCenter": null,
+      "emotionsRaw": {
+        "sad": 0.69,
+        "neutral": 0.24
+      },
+      "emotionsAvg5": {
+        "sad": 0.438,
+        "fear": 0.15399999999999997,
+        "happy": 0.13999999999999999,
+        "neutral": 0.37
+      },
+      "topEmotion": "sad",
+      "bodyScore": 0.38,
+      "postureHint": "centered",
+      "handActivity": "none",
+      "objects": [
+        {
+          "label": "person",
+          "score": 0.59
+        }
+      ],
+      "inferMs": 803
+    },
+    {
+      "ts": 2832628.599999994,
+      "faceCount": 1,
+      "bodyCount": 1,
+      "handCount": 0,
+      "objectCount": 1,
+      "faceScore": 0.41,
+      "bbox": {
+        "w": null,
+        "h": null
+      },
+      "yaw": -0.018675748374759864,
+      "pitch": 0.3222161948210709,
+      "roll": -0.3167512990790291,
+      "ear": 0.21773520001556193,
+      "eyeContact": false,
+      "leftIrisCenter": null,
+      "rightIrisCenter": null,
+      "emotionsRaw": {
+        "neutral": 0.57,
+        "fear": 0.16,
+        "sad": 0.15
+      },
+      "emotionsAvg5": {
+        "sad": 0.362,
+        "fear": 0.14,
+        "happy": 0.13999999999999999,
+        "neutral": 0.43600000000000005
+      },
+      "topEmotion": "neutral",
+      "bodyScore": 0.37,
+      "postureHint": "centered",
+      "handActivity": "none",
+      "objects": [
+        {
+          "label": "person",
+          "score": 0.59
+        }
+      ],
+      "inferMs": 922.5
+    },
+    {
+      "ts": 2833558.800000012,
+      "faceCount": 1,
+      "bodyCount": 1,
+      "handCount": 0,
+      "objectCount": 1,
+      "faceScore": 0.24,
+      "bbox": {
+        "w": null,
+        "h": null
+      },
+      "yaw": -0.005261514874243665,
+      "pitch": 0.33367051961419175,
+      "roll": -0.34185484903320884,
+      "ear": 0.26205214746119926,
+      "eyeContact": false,
+      "leftIrisCenter": null,
+      "rightIrisCenter": null,
+      "emotionsRaw": {
+        "neutral": 0.54,
+        "sad": 0.27
+      },
+      "emotionsAvg5": {
+        "sad": 0.33599999999999997,
+        "fear": 0.14,
+        "happy": 0.13999999999999999,
         "neutral": 0.466
       },
       "topEmotion": "neutral",
-      "bodyScore": 0.57,
+      "bodyScore": 0.35,
+      "postureHint": "centered",
+      "handActivity": "none",
+      "objects": [
+        {
+          "label": "person",
+          "score": 0.64
+        }
+      ],
+      "inferMs": 864.4000000059605
+    },
+    {
+      "ts": 2834432.900000006,
+      "faceCount": 1,
+      "bodyCount": 1,
+      "handCount": 0,
+      "objectCount": 1,
+      "faceScore": 0.11,
+      "bbox": {
+        "w": null,
+        "h": null
+      },
+      "yaw": 0.05278419693607799,
+      "pitch": 0.3427186953013873,
+      "roll": -0.3694453088964929,
+      "ear": 0.29458298731268645,
+      "eyeContact": false,
+      "leftIrisCenter": null,
+      "rightIrisCenter": null,
+      "emotionsRaw": {
+        "neutral": 0.51,
+        "happy": 0.18,
+        "sad": 0.14,
+        "fear": 0.12
+      },
+      "emotionsAvg5": {
+        "sad": 0.32,
+        "fear": 0.136,
+        "happy": 0.15,
+        "neutral": 0.4640000000000001
+      },
+      "topEmotion": "neutral",
+      "bodyScore": 0.4,
+      "postureHint": "centered",
+      "handActivity": "none",
+      "objects": [
+        {
+          "label": "person",
+          "score": 0.65
+        }
+      ],
+      "inferMs": 735.4000000059605
+    },
+    {
+      "ts": 2835174.5,
+      "faceCount": 1,
+      "bodyCount": 1,
+      "handCount": 0,
+      "objectCount": 1,
+      "faceScore": 0.14,
+      "bbox": {
+        "w": null,
+        "h": null
+      },
+      "yaw": 0.018832607522647538,
+      "pitch": 0.3442201589035531,
+      "roll": -0.3604655336350301,
+      "ear": 0.24309925137085142,
+      "eyeContact": false,
+      "leftIrisCenter": null,
+      "rightIrisCenter": null,
+      "emotionsRaw": {
+        "neutral": 0.42,
+        "sad": 0.31,
+        "happy": 0.16
+      },
+      "emotionsAvg5": {
+        "sad": 0.312,
+        "fear": 0.136,
+        "happy": 0.152,
+        "neutral": 0.45600000000000007
+      },
+      "topEmotion": "neutral",
+      "bodyScore": 0.4,
+      "postureHint": "centered",
+      "handActivity": "none",
+      "objects": [
+        {
+          "label": "person",
+          "score": 0.63
+        }
+      ],
+      "inferMs": 831.0999999940395
+    },
+    {
+      "ts": 2836012,
+      "faceCount": 1,
+      "bodyCount": 1,
+      "handCount": 0,
+      "objectCount": 1,
+      "faceScore": 0.12,
+      "bbox": {
+        "w": null,
+        "h": null
+      },
+      "yaw": 0.11651730047661625,
+      "pitch": 0.4163831533055716,
+      "roll": -0.39266961200132444,
+      "ear": 0.17758917014059486,
+      "eyeContact": false,
+      "leftIrisCenter": null,
+      "rightIrisCenter": null,
+      "emotionsRaw": {
+        "sad": 0.64,
+        "neutral": 0.23
+      },
+      "emotionsAvg5": {
+        "sad": 0.30200000000000005,
+        "fear": 0.136,
+        "happy": 0.152,
+        "neutral": 0.454
+      },
+      "topEmotion": "neutral",
+      "bodyScore": 0.4,
+      "postureHint": "centered",
+      "handActivity": "none",
+      "objects": [
+        {
+          "label": "person",
+          "score": 0.62
+        }
+      ],
+      "inferMs": 755.5999999940395
+    },
+    {
+      "ts": 2836774.5,
+      "faceCount": 1,
+      "bodyCount": 1,
+      "handCount": 0,
+      "objectCount": 1,
+      "faceScore": 0.35,
+      "bbox": {
+        "w": null,
+        "h": null
+      },
+      "yaw": 0.14677858275436306,
+      "pitch": 0.35044146016922806,
+      "roll": -0.37099981563038503,
+      "ear": 0.14805605026291205,
+      "blinkStarted": true,
+      "eyeContact": false,
+      "leftIrisCenter": null,
+      "rightIrisCenter": null,
+      "emotionsRaw": {
+        "neutral": 0.62,
+        "sad": 0.21
+      },
+      "emotionsAvg5": {
+        "sad": 0.31399999999999995,
+        "fear": 0.136,
+        "happy": 0.152,
+        "neutral": 0.46399999999999997
+      },
+      "topEmotion": "neutral",
+      "bodyScore": 0.46,
+      "postureHint": "centered",
+      "handActivity": "none",
+      "objects": [
+        {
+          "label": "person",
+          "score": 0.6
+        }
+      ],
+      "inferMs": 836.3000000119209
+    },
+    {
+      "ts": 2837616.5,
+      "faceCount": 1,
+      "bodyCount": 1,
+      "handCount": 0,
+      "objectCount": 1,
+      "faceScore": 0.56,
+      "bbox": {
+        "w": null,
+        "h": null
+      },
+      "yaw": 0.10345041888319605,
+      "pitch": 0.33201821674094467,
+      "roll": -0.3551413173368099,
+      "ear": 0.2084658630940407,
+      "eyeContact": false,
+      "leftIrisCenter": null,
+      "rightIrisCenter": null,
+      "emotionsRaw": {
+        "neutral": 0.59,
+        "sad": 0.31
+      },
+      "emotionsAvg5": {
+        "sad": 0.322,
+        "fear": 0.136,
+        "happy": 0.152,
+        "neutral": 0.4739999999999999
+      },
+      "topEmotion": "neutral",
+      "bodyScore": 0.35,
+      "postureHint": "centered",
+      "handActivity": "none",
+      "objects": [
+        {
+          "label": "person",
+          "score": 0.61
+        }
+      ],
+      "inferMs": 909.9000000059605
+    },
+    {
+      "ts": 2838532.900000006,
+      "faceCount": 1,
+      "bodyCount": 1,
+      "handCount": 0,
+      "objectCount": 1,
+      "faceScore": 0.12,
+      "bbox": {
+        "w": null,
+        "h": null
+      },
+      "yaw": 0.07657405497874951,
+      "pitch": 0.35317019312152304,
+      "roll": -0.36559315695717787,
+      "ear": 0.21499237071403862,
+      "eyeContact": false,
+      "leftIrisCenter": null,
+      "rightIrisCenter": null,
+      "emotionsRaw": {
+        "neutral": 0.77,
+        "sad": 0.15
+      },
+      "emotionsAvg5": {
+        "sad": 0.32399999999999995,
+        "fear": 0.136,
+        "happy": 0.152,
+        "neutral": 0.526
+      },
+      "topEmotion": "neutral",
+      "bodyScore": 0.38,
+      "postureHint": "centered",
+      "handActivity": "none",
+      "objects": [
+        {
+          "label": "person",
+          "score": 0.63
+        }
+      ],
+      "inferMs": 747.0999999940395
+    },
+    {
+      "ts": 2839284.700000018,
+      "faceCount": 1,
+      "bodyCount": 1,
+      "handCount": 0,
+      "objectCount": 1,
+      "faceScore": 0.1,
+      "bbox": {
+        "w": null,
+        "h": null
+      },
+      "yaw": 0.13034461327013122,
+      "pitch": 0.3583601612624329,
+      "roll": -0.37673661353644705,
+      "ear": 0.18380565281339756,
+      "eyeContact": false,
+      "leftIrisCenter": null,
+      "rightIrisCenter": null,
+      "emotionsRaw": {
+        "neutral": 0.49,
+        "sad": 0.41
+      },
+      "emotionsAvg5": {
+        "sad": 0.344,
+        "fear": 0.136,
+        "happy": 0.152,
+        "neutral": 0.54
+      },
+      "topEmotion": "neutral",
+      "bodyScore": 0.44,
+      "postureHint": "centered",
+      "handActivity": "none",
+      "objects": [
+        {
+          "label": "person",
+          "score": 0.62
+        }
+      ],
+      "inferMs": 662
+    },
+    {
+      "ts": 2839953.400000006,
+      "faceCount": 1,
+      "bodyCount": 1,
+      "handCount": 0,
+      "objectCount": 1,
+      "faceScore": 0.84,
+      "bbox": {
+        "w": null,
+        "h": null
+      },
+      "yaw": 0.09510625059664116,
+      "pitch": 0.3329228627027315,
+      "roll": -0.3765896507934414,
+      "ear": 0.21408525293045924,
+      "eyeContact": false,
+      "leftIrisCenter": null,
+      "rightIrisCenter": null,
+      "emotionsRaw": {
+        "sad": 0.62,
+        "neutral": 0.28
+      },
+      "emotionsAvg5": {
+        "sad": 0.34,
+        "fear": 0.136,
+        "happy": 0.152,
+        "neutral": 0.55
+      },
+      "topEmotion": "neutral",
+      "bodyScore": 0.4,
+      "postureHint": "centered",
+      "handActivity": "none",
+      "objects": [
+        {
+          "label": "person",
+          "score": 0.59
+        }
+      ],
+      "inferMs": 765.8000000119209
+    },
+    {
+      "ts": 2840724.599999994,
+      "faceCount": 1,
+      "bodyCount": 1,
+      "handCount": 0,
+      "objectCount": 1,
+      "faceScore": 0.16,
+      "bbox": {
+        "w": null,
+        "h": null
+      },
+      "yaw": 0.03853065400034666,
+      "pitch": 0.3625403178233185,
+      "roll": -0.41166101713557485,
+      "ear": 0.24451059338723202,
+      "eyeContact": false,
+      "leftIrisCenter": null,
+      "rightIrisCenter": null,
+      "emotionsRaw": {
+        "sad": 0.39,
+        "happy": 0.3,
+        "neutral": 0.14,
+        "fear": 0.12
+      },
+      "emotionsAvg5": {
+        "sad": 0.376,
+        "fear": 0.136,
+        "happy": 0.176,
+        "neutral": 0.454
+      },
+      "topEmotion": "neutral",
+      "bodyScore": 0.43,
+      "postureHint": "centered",
+      "handActivity": "none",
+      "objects": [
+        {
+          "label": "person",
+          "score": 0.63
+        }
+      ],
+      "inferMs": 805.1000000238419
+    },
+    {
+      "ts": 2841536.599999994,
+      "faceCount": 1,
+      "bodyCount": 1,
+      "handCount": 0,
+      "objectCount": 1,
+      "faceScore": 0.16,
+      "bbox": {
+        "w": null,
+        "h": null
+      },
+      "yaw": -0.03938799700922957,
+      "pitch": 0.3218839326120128,
+      "roll": -0.3863854887541407,
+      "ear": 0.27973999033885405,
+      "eyeContact": false,
+      "leftIrisCenter": null,
+      "rightIrisCenter": null,
+      "emotionsRaw": {
+        "neutral": 0.3,
+        "sad": 0.25,
+        "happy": 0.22,
+        "fear": 0.15
+      },
+      "emotionsAvg5": {
+        "sad": 0.364,
+        "fear": 0.13,
+        "happy": 0.194,
+        "neutral": 0.396
+      },
+      "topEmotion": "neutral",
+      "bodyScore": 0.42,
+      "postureHint": "centered",
+      "handActivity": "none",
+      "objects": [
+        {
+          "label": "person",
+          "score": 0.65
+        }
+      ],
+      "inferMs": 730.7000000178814
+    },
+    {
+      "ts": 2842274.099999994,
+      "faceCount": 0,
+      "bodyCount": 1,
+      "handCount": 0,
+      "objectCount": 1,
+      "yaw": 0,
+      "pitch": 0,
+      "roll": 0,
+      "eyeContact": false,
+      "leftIrisCenter": null,
+      "rightIrisCenter": null,
+      "emotionsAvg5": {
+        "sad": 0.364,
+        "fear": 0.13,
+        "happy": 0.194,
+        "neutral": 0.396
+      },
+      "topEmotion": "neutral",
+      "bodyScore": 0.42,
+      "postureHint": "ok",
+      "handActivity": "none",
+      "objects": [
+        {
+          "label": "person",
+          "score": 0.67
+        }
+      ],
+      "inferMs": 593.1000000238419
+    },
+    {
+      "ts": 2842874.300000012,
+      "faceCount": 1,
+      "bodyCount": 1,
+      "handCount": 0,
+      "objectCount": 1,
+      "faceScore": 0.18,
+      "bbox": {
+        "w": null,
+        "h": null
+      },
+      "yaw": 0.02782097623774662,
+      "pitch": 0.3211752907975871,
+      "roll": -0.40347231119484495,
+      "ear": 0.2855104683893201,
+      "eyeContact": false,
+      "leftIrisCenter": null,
+      "rightIrisCenter": null,
+      "emotionsRaw": {
+        "neutral": 0.34,
+        "sad": 0.27,
+        "happy": 0.25,
+        "fear": 0.1
+      },
+      "emotionsAvg5": {
+        "sad": 0.388,
+        "fear": 0.13,
+        "happy": 0.22199999999999998,
+        "neutral": 0.31
+      },
+      "topEmotion": "sad",
+      "bodyScore": 0.37,
       "postureHint": "centered",
       "handActivity": "none",
       "objects": [
         {
           "label": "person",
           "score": 0.71
-        },
-        {
-          "label": "chair",
-          "score": 0.32
         }
       ],
-      "inferMs": 689.6999999880791
+      "inferMs": 823.2999999821186
     },
     {
-      "ts": 261926.20000001788,
+      "ts": 2843703.700000018,
+      "faceCount": 0,
+      "bodyCount": 1,
+      "handCount": 0,
+      "objectCount": 1,
+      "yaw": 0,
+      "pitch": 0,
+      "roll": 0,
+      "eyeContact": false,
+      "leftIrisCenter": null,
+      "rightIrisCenter": null,
+      "emotionsAvg5": {
+        "sad": 0.388,
+        "fear": 0.13,
+        "happy": 0.22199999999999998,
+        "neutral": 0.31
+      },
+      "topEmotion": "sad",
+      "bodyScore": 0.42,
+      "postureHint": "ok",
+      "handActivity": "none",
+      "objects": [
+        {
+          "label": "person",
+          "score": 0.69
+        }
+      ],
+      "inferMs": 792.5
+    },
+    {
+      "ts": 2844503.300000012,
       "faceCount": 1,
       "bodyCount": 1,
       "handCount": 0,
       "objectCount": 1,
-      "faceScore": 1,
+      "faceScore": 0.23,
       "bbox": {
         "w": null,
         "h": null
       },
-      "yaw": -0.02278346490813217,
-      "pitch": 0.2845353457205502,
-      "roll": 0.06693813965820097,
-      "ear": 0.3388457571057637,
+      "yaw": 0.15603670908525216,
+      "pitch": 0.3243746555456122,
+      "roll": -0.40811343971141945,
+      "ear": 0.12600221411036297,
       "eyeContact": false,
       "leftIrisCenter": null,
       "rightIrisCenter": null,
       "emotionsRaw": {
-        "neutral": 0.48,
-        "happy": 0.24,
-        "sad": 0.21
+        "sad": 0.4,
+        "neutral": 0.33,
+        "happy": 0.22
       },
       "emotionsAvg5": {
-        "sad": 0.362,
-        "fear": 0.136,
-        "angry": 0.202,
-        "neutral": 0.458,
-        "happy": 0.24
+        "sad": 0.386,
+        "fear": 0.13,
+        "happy": 0.22999999999999998,
+        "neutral": 0.278
       },
-      "topEmotion": "neutral",
-      "bodyScore": 0.59,
+      "topEmotion": "sad",
+      "bodyScore": 0.43,
       "postureHint": "centered",
       "handActivity": "none",
       "objects": [
         {
           "label": "person",
-          "score": 0.75
+          "score": 0.66
         }
       ],
-      "inferMs": 736.7999999821186
+      "inferMs": 707.6999999880791
+    },
+    {
+      "ts": 2845220,
+      "faceCount": 1,
+      "bodyCount": 1,
+      "handCount": 0,
+      "objectCount": 1,
+      "faceScore": 0.3,
+      "bbox": {
+        "w": null,
+        "h": null
+      },
+      "yaw": 0.029179570463462715,
+      "pitch": 0.308267008805843,
+      "roll": -0.4048262630390421,
+      "ear": 0.27219325755787416,
+      "eyeContact": false,
+      "leftIrisCenter": null,
+      "rightIrisCenter": null,
+      "shakeCount": 2,
+      "emotionsRaw": {
+        "sad": 0.32,
+        "neutral": 0.3,
+        "happy": 0.27
+      },
+      "emotionsAvg5": {
+        "sad": 0.326,
+        "fear": 0.13,
+        "happy": 0.252,
+        "neutral": 0.28200000000000003
+      },
+      "topEmotion": "sad",
+      "bodyScore": 0.41,
+      "postureHint": "centered",
+      "handActivity": "none",
+      "objects": [
+        {
+          "label": "person",
+          "score": 0.63
+        }
+      ],
+      "inferMs": 781.9000000059605
+    },
+    {
+      "ts": 2846008.800000012,
+      "faceCount": 0,
+      "bodyCount": 1,
+      "handCount": 0,
+      "objectCount": 1,
+      "yaw": 0,
+      "pitch": 0,
+      "roll": 0,
+      "eyeContact": false,
+      "leftIrisCenter": null,
+      "rightIrisCenter": null,
+      "emotionsAvg5": {
+        "sad": 0.326,
+        "fear": 0.13,
+        "happy": 0.252,
+        "neutral": 0.28200000000000003
+      },
+      "topEmotion": "sad",
+      "bodyScore": 0.39,
+      "postureHint": "ok",
+      "handActivity": "none",
+      "objects": [
+        {
+          "label": "person",
+          "score": 0.68
+        }
+      ],
+      "inferMs": 630
     }
   ],
-  "endedAt": "2025-10-17T10:20:41.282Z",
-  "durationSec": 21,
+  "endedAt": "2025-10-17T11:03:45.040Z",
+  "durationSec": 33,
   "_checkpoint": false
 }

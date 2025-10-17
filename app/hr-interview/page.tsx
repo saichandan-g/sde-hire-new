@@ -618,12 +618,27 @@ export default function HRInterviewSimulatorPage() {
     console.log("[Main Page] currentQuestionIndex changed to:", currentQuestionIndex);
   }, [currentQuestionIndex]);
 
-  // Effect to save the report when the stage is set to "report"
+  // Effect to save the report and stop media when the stage is set to "report"
   useEffect(() => {
     if (hrInterviewStage === "report") {
       saveHRReport();
+      // Explicitly stop media stream when transitioning to report stage
+      if (window.__hrStopMedia) {
+        console.log("[Report Stage] Stopping media stream via __hrStopMedia()");
+        window.__hrStopMedia();
+      }
     }
   }, [hrInterviewStage, saveHRReport]);
+
+  // Effect to stop media when the component unmounts (user navigates away)
+  useEffect(() => {
+    return () => {
+      if (window.__hrStopMedia) {
+        console.log("[Cleanup] Stopping media stream on component unmount via __hrStopMedia()");
+        window.__hrStopMedia();
+      }
+    };
+  }, []);
 
   // ---------------------------
   // Render UI by stage
