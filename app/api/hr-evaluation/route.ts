@@ -144,7 +144,7 @@ CRITICAL: You must respond with ONLY a valid JSON object, no markdown formatting
             content: prompt
           }
         ],
-        temperature: 0.7, // Balanced creativity and consistency
+        temperature: 0.5, // Balanced creativity and consistency
         max_tokens: 3000,
         top_p: 0.9
       })

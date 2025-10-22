@@ -79,6 +79,16 @@ interface ResponseStatus {
   saveError: string | null
 }
 
+// Define the fixed first question
+const FIXED_FIRST_QUESTION: HRQuestion = {
+  Qid: "Q1",
+  question_type: "behavioral",
+  question_text: "Tell me about yourself?",
+  difficulty_level: "easy",
+  topic: "Self-Introduction",
+  focus_area: "General Background",
+};
+
 export default function HRInterviewSimulatorPage() {
   // START FLOW at mode-selection as requested
   const [hrInterviewStage, setHRInterviewStage] = useState<HRInterviewStage>("mode-selection")
@@ -129,11 +139,11 @@ export default function HRInterviewSimulatorPage() {
         }),
       });
 
-      if (response.ok) {
+      if (!response.ok) {
+        console.error('Failed to save HR report:', await response.json());
+      } else {
         console.log('✅ HR report saved successfully!');
         setIsReportSaved(true);
-      } else {
-        console.error('Failed to save HR report:', await response.json());
       }
     } catch (error) {
       console.error('Error saving HR report:', error);
@@ -198,9 +208,9 @@ export default function HRInterviewSimulatorPage() {
         console.error("[Resume Upload] Failed to save to sessionStorage:", e)
       }
 
-      // Step 2: Generate all 4 dynamic questions based on resume analysis
-      console.log("[Resume Upload] Analysis complete — generating all AI questions.");
-      await generateDynamicQuestions(analysis, []); // Generate all 4 questions in one go
+      // Step 2: Generate dynamic questions based on resume analysis, including the fixed first question
+      console.log("[Resume Upload] Analysis complete — generating AI questions.");
+      await generateDynamicQuestions(analysis);
 
     } catch (err) {
       console.error("Error processing resume:", err)
@@ -211,97 +221,107 @@ export default function HRInterviewSimulatorPage() {
     }
   }
 
-  // New function to generate all 4 dynamic questions in a single flow
-  const generateDynamicQuestions = async (currentResumeAnalysis: HRResumeAnalysis | null, currentResponses: InterviewResponse[]) => {
+  // Modified function to generate dynamic questions, incorporating the fixed first question
+  const generateDynamicQuestions = async (currentResumeAnalysis: HRResumeAnalysis | null) => {
     try {
       setIsGeneratingDynamicQuestions(true);
       setError(null);
       setHRInterviewStage("analyzing"); // Show analyzing stage for all question generation
 
       console.log(`[Frontend] API Key before encoding: ${apiKey ? 'Provided' : 'Not Provided'}`);
-      console.log(`[Frontend] Generating initial 2 dynamic questions.`);
 
-      // First API call for initial 2 questions
-      const initialQuestionsResponse = await fetch("/api/hr-questions", {
+      // Start with the fixed first question
+      const fixedQ1: HRQuestion = FIXED_FIRST_QUESTION;
+      const allGeneratedQuestions: HRQuestion[] = [fixedQ1];
+
+      // Prepare responses for the first dynamic question (Q2)
+      const q1ResponseForFollowUp = [{
+        Qid: fixedQ1.Qid,
+        userResponse: "", // Response for Q1 is not available yet
+      }];
+
+      console.log(`[Frontend] Generating Q2 based on resume analysis and Q1 context.`);
+
+      // API call for Q2
+      const q2Response = await fetch("/api/hr-questions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           resumeAnalysis: currentResumeAnalysis,
           selectedAIModel: selectedAIModel,
-          userResponses: [], // No responses yet for initial questions
+          userResponses: q1ResponseForFollowUp, // Pass Q1 as context
           apiKey: apiKey,
-          numQuestions: 2, // Request 2 questions
+          numQuestions: 1, // Request only 1 question (Q2)
         }),
       });
 
-      if (!initialQuestionsResponse.ok) {
-        const errorData = await initialQuestionsResponse.json();
-        throw new Error(errorData.error || "Failed to generate initial dynamic questions");
+      if (!q2Response.ok) {
+        const errorData = await q2Response.json();
+        throw new Error(errorData.error || "Failed to generate Q2");
       }
 
-      const initialQ = await initialQuestionsResponse.json();
-      const parsedInitialQuestions: HRQuestion[] = Array.isArray(initialQ)
-        ? initialQ
-        : initialQ?.questions || initialQ?.data || [];
+      const q2Data = await q2Response.json();
+      const parsedQ2: HRQuestion[] = Array.isArray(q2Data)
+        ? q2Data
+        : q2Data?.questions || q2Data?.data || [];
 
-      if (parsedInitialQuestions.length === 0) {
-        throw new Error("No initial questions generated.");
+      if (parsedQ2.length === 0) {
+        throw new Error("No Q2 generated.");
       }
 
-      // Assign unique Qids for the first set (Q1, Q2)
-      const uniquelyIdInitialQuestions = parsedInitialQuestions.map((q, index) => ({
-        ...q,
-        Qid: `Q${index + 1}`,
-      }));
+      // Assign Qid for Q2
+      const q2 = { ...parsedQ2[0], Qid: `Q2` };
+      allGeneratedQuestions.push(q2);
 
-      // Prepare responses for the second API call (using Qids from uniquelyIdInitialQuestions)
-      const initialQuestionResponsesForFollowUp = uniquelyIdInitialQuestions.map(q => ({
-        Qid: q.Qid,
-        userResponse: "", // Responses are not available yet, but Qids provide context
-      }));
+      // Prepare responses for the next two dynamic questions (Q3, Q4)
+      const q1AndQ2ResponsesForFollowUp = [
+        { Qid: fixedQ1.Qid, userResponse: "" }, // Q1 context
+        { Qid: q2.Qid, userResponse: "" },      // Q2 context
+      ];
 
-      console.log(`[Frontend] Generated initial 2 questions. Generating next 2 follow-up questions.`);
+      console.log(`[Frontend] Generating Q3 and Q4 based on resume analysis and Q1, Q2 context.`);
 
-      // Second API call for next 2 questions, using initial questions as context
-      const followUpQuestionsResponse = await fetch("/api/hr-questions", {
+      // API call for Q3 and Q4
+      const q3q4Response = await fetch("/api/hr-questions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           resumeAnalysis: currentResumeAnalysis,
           selectedAIModel: selectedAIModel,
-          userResponses: initialQuestionResponsesForFollowUp, // Pass Qids of initial questions for context
+          userResponses: q1AndQ2ResponsesForFollowUp, // Pass Q1 and Q2 as context
           apiKey: apiKey,
-          numQuestions: 2, // Request 2 follow-up questions
+          numQuestions: 2, // Request 2 questions (Q3, Q4)
         }),
       });
 
-      if (!followUpQuestionsResponse.ok) {
-        const errorData = await followUpQuestionsResponse.json();
-        throw new Error(errorData.error || "Failed to generate follow-up dynamic questions");
+      if (!q3q4Response.ok) {
+        const errorData = await q3q4Response.json();
+        throw new Error(errorData.error || "Failed to generate Q3 and Q4");
       }
 
-      const followUpQ = await followUpQuestionsResponse.json();
-      const parsedFollowUpQuestions: HRQuestion[] = Array.isArray(followUpQ)
-        ? followUpQ
-        : followUpQ?.questions || followUpQ?.data || [];
+      const q3q4Data = await q3q4Response.json();
+      const parsedQ3Q4: HRQuestion[] = Array.isArray(q3q4Data)
+        ? q3q4Data
+        : q3q4Data?.questions || q3q4Data?.data || [];
 
-      // Assign unique Qids for the second set (Q3, Q4)
-      const uniquelyIdFollowUpQuestions = parsedFollowUpQuestions.map((q, index) => ({
-        ...q,
-        Qid: `Q${index + 3}`, // Start from Q3
-      }));
+      if (parsedQ3Q4.length < 2) {
+        throw new Error("Not enough questions generated for Q3 and Q4.");
+      }
 
-      const allGeneratedQuestions = [...uniquelyIdInitialQuestions, ...uniquelyIdFollowUpQuestions];
+      // Assign Qids for Q3 and Q4
+      const q3 = { ...parsedQ3Q4[0], Qid: `Q3` };
+      const q4 = { ...parsedQ3Q4[1], Qid: `Q4` };
+      allGeneratedQuestions.push(q3, q4);
 
       setDynamicQuestions(allGeneratedQuestions);
-      setAllQuestions(allGeneratedQuestions); // Update allQuestions with all 4 dynamic questions
+      setAllQuestions(allGeneratedQuestions); // Update allQuestions with all 4 questions
       setHRInterviewQuestions(allGeneratedQuestions); // Update for display
-      console.log(`[Debug] After all dynamic questions generation: dynamicQuestions.length=${allGeneratedQuestions.length}, allQuestions.length=${allGeneratedQuestions.length}`);
+      console.log(`[Debug] After all dynamic questions generation: allQuestions.length=${allGeneratedQuestions.length}`);
 
       setHRInterviewStage("questions-ready"); // Move to questions-ready after all 4 are generated
     } catch (err) {
-      console.error(`Error generating all dynamic questions:`, err);
-      setError(err instanceof Error ? err.message : `Failed to generate all dynamic questions`);
+      console.error(`Error generating dynamic questions:`, err);
+      setError(err instanceof Error ? err.message : `Failed to generate dynamic questions`);
       setHRInterviewStage("upload"); // Go back to upload if generation fails
     } finally {
       setIsGeneratingDynamicQuestions(false); // Ensure loading state is reset
@@ -748,7 +768,7 @@ export default function HRInterviewSimulatorPage() {
                     <div className="flex items-center justify-center space-x-2">
                       <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" aria-label="Step in progress"></div>
                       <span className="text-sm text-blue-600 dark:text-blue-400">
-                        {isGeneratingDynamicQuestions ? "Generating all 4 personalized questions" : "Analyzing skills and experience"}
+                        {isGeneratingDynamicQuestions ? "Generating personalized questions" : "Analyzing skills and experience"}
                       </span>
                     </div>
                     <div className="flex items-center justify-center space-x-2">
@@ -759,7 +779,7 @@ export default function HRInterviewSimulatorPage() {
 
                   <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed">
                     {isGeneratingDynamicQuestions
-                      ? "AI is crafting all 4 personalized questions based on your resume analysis and initial questions. Please wait a moment."
+                      ? "AI is crafting personalized questions based on your resume analysis and previous questions. Please wait a moment."
                       : "We're carefully analyzing your resume to understand your background, skills, and experience. This helps us create relevant interview questions tailored specifically for you."}
                   </p>
 

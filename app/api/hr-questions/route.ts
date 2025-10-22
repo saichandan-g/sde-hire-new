@@ -20,6 +20,7 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     const resumeAnalysis = body.resumeAnalysis || {};
+    const numQuestions: number = body.numQuestions || 2; // New: number of questions to generate
   // Normalize model selector and accept "chatgpt" as an alias for "openai"
   let selectedAIModel = (body.selectedAIModel || 'mistral').toString().toLowerCase(); // Default to mistral
   if (selectedAIModel === 'chatgpt') selectedAIModel = 'openai';
@@ -51,32 +52,32 @@ export async function POST(request: Request) {
     }
 
     console.log(`🔍 Starting HR questions generation using model: ${selectedAIModel}...`);
-    
+
     let questions: HRQuestion[] = [];
 
     switch (selectedAIModel) {
       case 'mistral':
-        questions = await generateMistralHRQuestions(resumeAnalysis, userResponses, apiKey);
+        questions = await generateMistralHRQuestions(resumeAnalysis, userResponses, apiKey, numQuestions);
         break;
       case 'openai':
-        questions = await generateOpenAIHRQuestions(resumeAnalysis, userResponses, apiKey);
+        questions = await generateOpenAIHRQuestions(resumeAnalysis, userResponses, apiKey, numQuestions);
         break;
       case 'google': // Handle 'google' model explicitly
-        questions = await generateGoogleHRQuestions(resumeAnalysis, userResponses, apiKey);
+        questions = await generateGoogleHRQuestions(resumeAnalysis, userResponses, apiKey, numQuestions);
         break;
       case 'grok':
-        questions = await generateGrokHRQuestions(resumeAnalysis, userResponses, apiKey);
+        questions = await generateGrokHRQuestions(resumeAnalysis, userResponses, apiKey, numQuestions);
         break;
       default:
         console.warn(`Unknown AI model selected: ${selectedAIModel}. Falling back to Mistral.`);
-        questions = await generateMistralHRQuestions(resumeAnalysis, userResponses, apiKey);
+        questions = await generateMistralHRQuestions(resumeAnalysis, userResponses, apiKey, numQuestions);
         break;
     }
-    
+
     console.log(`✅ Generated ${questions.length} AI HR questions`);
-    
+
     return NextResponse.json(questions);
-    
+
   } catch (error: any) {
     console.error('Error generating HR questions:', error);
     // Fallback to default HR questions if generation fails
@@ -91,7 +92,7 @@ function getRandomSubset<T>(array: T[], n: number): T[] {
   return shuffled.slice(0, n);
 }
 
-async function generateMistralHRQuestions(resumeAnalysis: any, userResponses: UserResponse[], apiKey?: string): Promise<HRQuestion[]> {
+async function generateMistralHRQuestions(resumeAnalysis: any, userResponses: UserResponse[], apiKey?: string, numQuestions: number = 2): Promise<HRQuestion[]> {
   try {
     const mistralApiKey = apiKey || process.env.MISTRAL_API_KEY;
     const mistralUrl = 'https://api.mistral.ai/v1/chat/completions';
@@ -402,7 +403,7 @@ function normalizeQuestionObject(raw: any) {
   return obj;
 }
 
-async function generateOpenAIHRQuestions(resumeAnalysis: any, userResponses: UserResponse[], apiKey: string): Promise<HRQuestion[]> {
+async function generateOpenAIHRQuestions(resumeAnalysis: any, userResponses: UserResponse[], apiKey: string, numQuestions: number = 2): Promise<HRQuestion[]> {
   try {
     let finalOpenAIApiKey = apiKey; // Prioritize API key from request body
     const openaiUrl = 'https://api.openai.com/v1/chat/completions';
@@ -610,7 +611,7 @@ CRITICAL: Questions must be professional-grade, relevant to the candidate's back
   }
 }
 
-async function generateGoogleHRQuestions(resumeAnalysis: any, userResponses: UserResponse[], apiKey: string): Promise<HRQuestion[]> {
+async function generateGoogleHRQuestions(resumeAnalysis: any, userResponses: UserResponse[], apiKey: string, numQuestions: number = 2): Promise<HRQuestion[]> {
   try {
     const googleApiKey = apiKey || process.env.GOOGLE_API_KEY;
     const googleUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent`; // Updated model to gemini-2.5-flash
@@ -781,7 +782,7 @@ CRITICAL: Questions must be professional-grade, relevant to the candidate's back
   }
 }
 
-async function generateGrokHRQuestions(resumeAnalysis: any, userResponses: UserResponse[], apiKey: string): Promise<HRQuestion[]> {
+async function generateGrokHRQuestions(resumeAnalysis: any, userResponses: UserResponse[], apiKey: string, numQuestions: number = 2): Promise<HRQuestion[]> {
   try {
     const grokApiKey = apiKey || process.env.GROK_API_KEY;
     // NOTE: The Grok API endpoint is not publicly available yet. This is a placeholder.
