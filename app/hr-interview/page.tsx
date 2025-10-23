@@ -225,12 +225,12 @@ export default function HRInterviewSimulatorPage() {
     }
   }
 
-  // Modified function to generate dynamic questions, incorporating the fixed first question
+  // Modified function to generate all 4 questions, but Q3/Q4 will be regenerated after Q2
   const generateDynamicQuestions = async (currentResumeAnalysis: HRResumeAnalysis | null) => {
     try {
       setIsGeneratingDynamicQuestions(true);
       setError(null);
-      setHRInterviewStage("analyzing"); // Show analyzing stage for all question generation
+      setHRInterviewStage("analyzing"); // Show analyzing stage for question generation
 
       // FORCE CLEAR ANY CACHED QUESTIONS - Don't load from sessionStorage
       setAllQuestions([]); // Clear existing questions
@@ -291,13 +291,13 @@ export default function HRInterviewSimulatorPage() {
       const q2 = { ...parsedQ2[0], Qid: `Q2` };
       allGeneratedQuestions.push(q2);
 
-      // Prepare responses for the next two dynamic questions (Q3, Q4)
+      // Generate Q3 and Q4 with empty responses initially (will be regenerated after Q2)
       const q1AndQ2ResponsesForFollowUp = [
         { Qid: fixedQ1.Qid, userResponse: "" }, // Q1 context
         { Qid: q2.Qid, userResponse: "" },      // Q2 context
       ];
 
-      console.log(`[Frontend] Generating Q3 and Q4 based on resume analysis and Q1, Q2 context.`);
+      console.log(`[Frontend] Generating Q3 and Q4 with empty responses (will be regenerated after Q2).`);
 
       // API call for Q3 and Q4
       const q3q4Response = await fetch("/api/hr-questions", {
@@ -346,6 +346,82 @@ export default function HRInterviewSimulatorPage() {
     }
   };
 
+  // New function to regenerate Q3 and Q4 after Q1 & Q2 responses
+  const generateRemainingQuestions = async (q1Response: string, q2Response: string) => {
+    try {
+      console.log(`[Frontend] Regenerating Q3 and Q4 based on actual Q1 and Q2 responses.`);
+      
+      const q1AndQ2Responses = [
+        { Qid: "Q1", userResponse: q1Response },
+        { Qid: "Q2", userResponse: q2Response },
+      ];
+
+      console.log(`[Frontend API] Making request to /api/hr-questions for Q3 and Q4...`);
+      console.log(`[Frontend API] Q1 Response length: ${q1Response.length}`);
+      console.log(`[Frontend API] Q2 Response length: ${q2Response.length}`);
+
+      const q3q4Response = await fetch("/api/hr-questions", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          resumeAnalysis: hrResumeAnalysis,
+          selectedAIModel: selectedAIModel,
+          userResponses: q1AndQ2Responses,
+          apiKey: apiKey,
+          numQuestions: 2, // Request 2 questions (Q3, Q4)
+        }),
+      });
+
+      if (!q3q4Response.ok) {
+        const errorData = await q3q4Response.json();
+        throw new Error(errorData.error || "Failed to generate Q3 and Q4");
+      }
+
+      const q3q4Data = await q3q4Response.json();
+      const parsedQ3Q4: HRQuestion[] = Array.isArray(q3q4Data)
+        ? q3q4Data
+        : q3q4Data?.questions || q3q4Data?.data || [];
+
+      if (parsedQ3Q4.length < 2) {
+        throw new Error("Not enough questions generated for Q3 and Q4.");
+      }
+
+      // Assign Qids for Q3 and Q4
+      const q3 = { ...parsedQ3Q4[0], Qid: `Q3` };
+      const q4 = { ...parsedQ3Q4[1], Qid: `Q4` };
+
+      // Update existing Q3 and Q4 in the questions array
+      const updatedQuestions = [...allQuestions];
+      updatedQuestions[2] = q3; // Replace Q3
+      updatedQuestions[3] = q4; // Replace Q4
+      
+      setAllQuestions(updatedQuestions);
+      setHRInterviewQuestions(updatedQuestions);
+      
+      console.log(`[Frontend] Successfully regenerated Q3 and Q4 with actual responses.`);
+      
+      // Update the interview responses array for Q3 and Q4
+      const updatedResponses = [...interviewResponses];
+      updatedResponses[2] = {
+        ...updatedResponses[2],
+        questionText: q3.question_text,
+        questionType: q3.question_type,
+        questionTopic: q3.topic,
+      };
+      updatedResponses[3] = {
+        ...updatedResponses[3],
+        questionText: q4.question_text,
+        questionType: q4.question_type,
+        questionTopic: q4.topic,
+      };
+      setInterviewResponses(updatedResponses);
+
+    } catch (err) {
+      console.error('Error regenerating remaining questions:', err);
+      // Don't set error state, just log it - we don't want to break the flow
+    }
+  };
+
   // AI model selection handler in PRO flow:
   // Previously selected model jumped to interview — now it should proceed to upload step.
   const handleAIModelSelection = (model: string, apiKey: string) => {
@@ -378,7 +454,20 @@ export default function HRInterviewSimulatorPage() {
       localStorage.setItem(`hr_interview_responses_${interviewSessionId}`, JSON.stringify(interviewResponses));
     }
 
-    // 2. If there are more questions (all 4 dynamic questions are already generated)
+    // 2. Check if we need to regenerate Q3 and Q4 after Q2
+    if (currentQuestionIndex === 1 && allQuestions.length === 4) {
+      // User just finished Q2, regenerate Q3 and Q4 based on Q1 and Q2 responses
+      const q1Response = interviewResponses[0]?.userResponse || "";
+      const q2Response = interviewResponses[1]?.userResponse || "";
+      
+      if (q1Response && q2Response) {
+        console.log(`[Question Navigation] Q2 completed, regenerating Q3 and Q4 based on responses`);
+        // Regenerate Q3 and Q4 in the background (no loading screen)
+        generateRemainingQuestions(q1Response, q2Response);
+      }
+    }
+
+    // 3. If there are more questions (all 4 dynamic questions are already generated)
     if (currentQuestionIndex < allQuestions.length - 1) {
       const nextIndex = currentQuestionIndex + 1;
       console.log(`[Question Navigation] Moving from Qid ${allQuestions[currentQuestionIndex].Qid} to Qid ${allQuestions[nextIndex].Qid}`);
@@ -388,7 +477,7 @@ export default function HRInterviewSimulatorPage() {
         const nextResponse = interviewResponses[nextIndex];
         console.log(`[Question Navigation] Moving to Qid ${allQuestions[nextIndex].Qid}, has existing response:`, nextResponse?.hasResponse);
       }
-    } else { // 3. This is the absolute final question (after all 4 dynamic questions have been answered)
+    } else { // 4. This is the absolute final question (after all 4 dynamic questions have been answered)
       console.log("[Question Navigation] Absolute final question reached, generating HR evaluation...");
 
       // Show summary of all responses

@@ -270,26 +270,123 @@ function extractHRProjectTypes(resumeText: string): string[] {
 }
 
 function extractIndustryExperience(resumeText: string): string[] {
-  const industries: { [key: string]: string[] } = {
-    'Fintech': ['fintech', 'financial', 'banking', 'payment', 'trading', 'investment'],
-    'Healthcare': ['healthcare', 'medical', 'pharmaceutical', 'biotech', 'clinical'],
-    'E-commerce': ['e-commerce', 'ecommerce', 'retail', 'shopping', 'marketplace'],
-    'Education': ['education', 'learning', 'edtech', 'academic', 'university'],
-    'Enterprise': ['enterprise', 'b2b', 'saas', 'corporate', 'business'],
-    'Media/Entertainment': ['media', 'entertainment', 'gaming', 'streaming', 'content'],
-    'Transportation': ['transportation', 'logistics', 'delivery', 'mobility', 'automotive']
+  const resumeLower = resumeText.toLowerCase();
+  
+  // More specific industry detection with context awareness
+  const industries: { [key: string]: { keywords: string[], contextRequired?: string[] } } = {
+    'Fintech': { 
+      keywords: ['fintech', 'financial technology', 'banking software', 'payment processing', 'trading platform', 'investment management', 'fintech company', 'financial services'],
+      contextRequired: ['company', 'industry', 'sector', 'worked at', 'experience in']
+    },
+    'Healthcare': { 
+      keywords: ['healthcare', 'medical software', 'pharmaceutical', 'biotech', 'clinical', 'healthcare technology', 'medical device', 'healthcare industry'],
+      contextRequired: ['company', 'industry', 'sector', 'worked at', 'experience in']
+    },
+    'E-commerce': { 
+      keywords: ['e-commerce', 'ecommerce', 'online retail', 'shopping platform', 'marketplace', 'e-commerce platform', 'online marketplace'],
+      contextRequired: ['company', 'industry', 'sector', 'worked at', 'experience in']
+    },
+    'Education': { 
+      keywords: ['edtech', 'educational technology', 'learning platform', 'education technology', 'educational software', 'online learning'],
+      contextRequired: ['company', 'industry', 'sector', 'worked at', 'experience in']
+    },
+    'Enterprise': { 
+      keywords: ['enterprise software', 'b2b', 'saas', 'enterprise solutions', 'corporate software', 'business software'],
+      contextRequired: ['company', 'industry', 'sector', 'worked at', 'experience in']
+    },
+    'Media/Entertainment': { 
+      keywords: ['entertainment industry', 'gaming industry', 'streaming platform', 'media company', 'entertainment company', 'gaming company'],
+      contextRequired: ['company', 'industry', 'sector', 'worked at', 'experience in']
+    },
+    'Transportation': { 
+      keywords: ['transportation', 'logistics', 'delivery', 'mobility', 'automotive', 'transportation industry', 'logistics company'],
+      contextRequired: ['company', 'industry', 'sector', 'worked at', 'experience in']
+    },
+    'Technology': {
+      keywords: ['software engineering', 'tech company', 'technology company', 'software development', 'tech industry'],
+      contextRequired: ['company', 'industry', 'sector', 'worked at', 'experience in']
+    }
   };
   
   const foundIndustries: string[] = [];
-  Object.entries(industries).forEach(([industry, keywords]) => {
-    const found = keywords.some(keyword => 
-      resumeText.toLowerCase().includes(keyword)
+  
+  Object.entries(industries).forEach(([industry, config]) => {
+    const { keywords, contextRequired } = config;
+    
+    // Check if any keywords are found
+    const matchingKeywords = keywords.filter(keyword => 
+      resumeLower.includes(keyword)
     );
-    if (found) foundIndustries.push(industry);
+    
+    if (matchingKeywords.length > 0) {
+      // If context is required, check if it's mentioned in a professional context
+      if (contextRequired) {
+        const hasContext = contextRequired.some(context => 
+          resumeLower.includes(context)
+        );
+        
+        if (hasContext) {
+          foundIndustries.push(industry);
+          console.log(`🔍 [extractIndustryExperience] Found ${industry} with context:`, matchingKeywords);
+        } else {
+          console.log(`🔍 [extractIndustryExperience] Found ${industry} keywords but no professional context:`, matchingKeywords);
+        }
+      } else {
+        foundIndustries.push(industry);
+        console.log(`🔍 [extractIndustryExperience] Found ${industry}:`, matchingKeywords);
+      }
+    }
   });
   
-  console.log('🔍 [extractIndustryExperience] Found industries:', foundIndustries);
+  // If no specific industries found, try to infer from company names or job titles
+  if (foundIndustries.length === 0) {
+    const companyInference = inferIndustryFromCompanyNames(resumeText);
+    if (companyInference) {
+      foundIndustries.push(companyInference);
+      console.log(`🔍 [extractIndustryExperience] Inferred industry from company names: ${companyInference}`);
+    }
+  }
+  
+  // If still no industries found, default to Technology for software engineers
+  if (foundIndustries.length === 0) {
+    const techKeywords = ['software engineer', 'developer', 'programmer', 'software development', 'coding', 'programming'];
+    const hasTechKeywords = techKeywords.some(keyword => resumeLower.includes(keyword));
+    
+    if (hasTechKeywords) {
+      foundIndustries.push('Technology');
+      console.log(`🔍 [extractIndustryExperience] Defaulting to Technology based on role keywords`);
+    }
+  }
+  
+  console.log('🔍 [extractIndustryExperience] Final found industries:', foundIndustries);
   return foundIndustries;
+}
+
+function inferIndustryFromCompanyNames(resumeText: string): string | null {
+  const resumeLower = resumeText.toLowerCase();
+  
+  // Common company name patterns that indicate industry
+  const companyPatterns = {
+    'Fintech': ['bank', 'financial', 'payment', 'trading', 'investment', 'fintech'],
+    'Healthcare': ['health', 'medical', 'pharma', 'biotech', 'clinical'],
+    'E-commerce': ['retail', 'shopping', 'marketplace', 'ecommerce'],
+    'Education': ['education', 'learning', 'university', 'school'],
+    'Media/Entertainment': ['media', 'entertainment', 'gaming', 'streaming'],
+    'Transportation': ['transport', 'logistics', 'delivery', 'mobility']
+  };
+  
+  for (const [industry, patterns] of Object.entries(companyPatterns)) {
+    const hasPattern = patterns.some(pattern => 
+      resumeLower.includes(pattern) && 
+      (resumeLower.includes('company') || resumeLower.includes('inc') || resumeLower.includes('corp'))
+    );
+    
+    if (hasPattern) {
+      return industry;
+    }
+  }
+  
+  return null;
 }
 
 function extractLeadershipExperience(resumeText: string): LeadershipEvidence {

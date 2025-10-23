@@ -37,6 +37,26 @@ export async function POST(request: Request) {
     console.log('   - hasStrongCommunication:', resumeAnalysis.hrProfile?.hasStrongCommunication);
     console.log('   - Full resumeAnalysis object keys:', Object.keys(resumeAnalysis));
     console.log('   - Full industryExperience array:', JSON.stringify(resumeAnalysis.industryExperience, null, 2));
+    
+    // CRITICAL: Log the exact industry data being sent to AI models
+    console.log('🚨 [HR-QUESTIONS API] CRITICAL - Industry data being sent to AI models:');
+    console.log('   - Industry Experience Array:', resumeAnalysis.industryExperience);
+    console.log('   - Industry Experience String:', resumeAnalysis.industryExperience?.join(', ') || 'General');
+    console.log('   - This will be used in AI prompts to generate industry-specific questions');
+    
+    // VALIDATION: Check for suspicious industry data that might indicate the old bug
+    const suspiciousIndustries = ['Education', 'Media/Entertainment'];
+    const hasSuspiciousIndustries = resumeAnalysis.industryExperience?.some((industry: string) => 
+      suspiciousIndustries.includes(industry)
+    );
+    
+    if (hasSuspiciousIndustries) {
+      console.warn('⚠️ [HR-QUESTIONS API] WARNING: Detected potentially suspicious industry data:', resumeAnalysis.industryExperience);
+      console.warn('   - This might indicate the old industry extraction bug');
+      console.warn('   - Please verify the resume analysis is working correctly');
+    } else {
+      console.log('✅ [HR-QUESTIONS API] Industry data looks reasonable:', resumeAnalysis.industryExperience);
+    }
 
     if (!resumeAnalysis || Object.keys(resumeAnalysis).length === 0) {
       return NextResponse.json({ error: 'Resume analysis data is required' }, { status: 400 });
