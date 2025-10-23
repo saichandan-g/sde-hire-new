@@ -50,6 +50,7 @@ interface CommunicationEvidence {
 }
 
 function analyzeResumeForHR(resumeText: string) {
+  console.log('🔍 [analyzeResumeForHR] Raw resumeText input:', resumeText.substring(0, 500) + '...'); // Log first 500 chars
   const resumeLower = resumeText.toLowerCase();
   
   // HR-focused analysis categories
@@ -287,6 +288,7 @@ function extractIndustryExperience(resumeText: string): string[] {
     if (found) foundIndustries.push(industry);
   });
   
+  console.log('🔍 [extractIndustryExperience] Found industries:', foundIndustries);
   return foundIndustries;
 }
 

@@ -28,6 +28,16 @@ export async function POST(request: Request) {
     const userResponses: UserResponse[] = body.userResponses || []; // New: to capture answers to fixed questions
     const encodedApiKey = body.apiKey || '';
 
+    // DETAILED DEBUG LOGGING - Log the exact resume analysis being received
+    console.log('🔍 [HR-QUESTIONS API] Received resumeAnalysis data:');
+    console.log('   - experienceLevel:', resumeAnalysis.experienceLevel);
+    console.log('   - industryExperience:', resumeAnalysis.industryExperience);
+    console.log('   - primaryStrengths:', resumeAnalysis.hrProfile?.primaryStrengths);
+    console.log('   - hasLeadershipExperience:', resumeAnalysis.hrProfile?.hasLeadershipExperience);
+    console.log('   - hasStrongCommunication:', resumeAnalysis.hrProfile?.hasStrongCommunication);
+    console.log('   - Full resumeAnalysis object keys:', Object.keys(resumeAnalysis));
+    console.log('   - Full industryExperience array:', JSON.stringify(resumeAnalysis.industryExperience, null, 2));
+
     if (!resumeAnalysis || Object.keys(resumeAnalysis).length === 0) {
       return NextResponse.json({ error: 'Resume analysis data is required' }, { status: 400 });
     }
@@ -123,6 +133,8 @@ async function generateMistralHRQuestions(resumeAnalysis: any, userResponses: Us
 
     const prompt = `You are a senior HR interviewer with expertise in creating professional, industry-standard HR interview questions. Based on the comprehensive resume analysis below, and considering the candidate's previous answers (if provided), generate 2 HIGH-QUALITY HR questions that match professional interview standards.
 
+CRITICAL INSTRUCTION: You MUST base questions ONLY on the candidate's ACTUAL industry experience and background from the resume analysis. If the candidate has specific industry experience (like Fintech, Technology, etc.), reference THOSE industries ONLY. NEVER create questions referencing Education, Media, Entertainment, or any other industries not explicitly mentioned in the resume analysis.
+
 COMPREHENSIVE RESUME ANALYSIS:
 ${JSON.stringify(resumeAnalysis, null, 2)}
 ${userResponsesText}
@@ -145,8 +157,6 @@ CANDIDATE PROFILE:
 - Industry Experience: ${resumeAnalysis.industryExperience?.join(', ') || 'General'}
 - Leadership Experience: ${resumeAnalysis.hrProfile?.hasLeadershipExperience ? 'Yes' : 'No'}
 - Communication Skills: ${resumeAnalysis.hrProfile?.hasStrongCommunication ? 'Strong' : 'Standard'}
-
-GENERATE QUESTIONS FOLLOWING THESE PROFESSIONAL STANDARDS:
 
 QUESTION QUALITY REQUIREMENTS:
 - Questions must be specific, practical, and test real-world soft skills
@@ -466,6 +476,8 @@ async function generateOpenAIHRQuestions(resumeAnalysis: any, userResponses: Use
 
     const prompt = `You are a senior HR interviewer with expertise in creating professional, industry-standard HR interview questions. Based on the comprehensive resume analysis below, and considering the candidate's previous answers (if provided), generate 2 HIGH-QUALITY HR questions that match professional interview standards.
 
+CRITICAL INSTRUCTION: You MUST base questions ONLY on the candidate's ACTUAL industry experience and background from the resume analysis. If the candidate has specific industry experience (like Fintech, Technology, etc.), reference THOSE industries ONLY. NEVER create questions referencing Education, Media, Entertainment, or any other industries not explicitly mentioned in the resume analysis.
+
 COMPREHENSIVE RESUME ANALYSIS:
 ${JSON.stringify(resumeAnalysis, null, 2)}
 ${userResponsesText}
@@ -487,6 +499,8 @@ CANDIDATE PROFILE:
 - Industry Experience: ${resumeAnalysis.industryExperience?.join(', ') || 'General'}
 - Leadership Experience: ${resumeAnalysis.hrProfile?.hasLeadershipExperience ? 'Yes' : 'No'}
 - Communication Skills: ${resumeAnalysis.hrProfile?.hasStrongCommunication ? 'Strong' : 'Standard'}
+
+WARNING: DO NOT reference or create questions about industries that are not listed in the resume analysis. If industry experience contains ["Fintech"], then questions should reference Fintech industry experiences ONLY.
 
 GENERATE QUESTIONS FOLLOWING THESE PROFESSIONAL STANDARDS:
 
@@ -645,6 +659,8 @@ async function generateGoogleHRQuestions(resumeAnalysis: any, userResponses: Use
 
     const prompt = `You are a senior HR interviewer with expertise in creating professional, industry-standard HR interview questions. Based on the comprehensive resume analysis below, and considering the candidate's previous answers (if provided), generate 2 HIGH-QUALITY HR questions that match professional interview standards.
 
+CRITICAL INSTRUCTION: You MUST base questions ONLY on the candidate's ACTUAL industry experience and background from the resume analysis. If the candidate has specific industry experience (like Fintech, Technology, etc.), reference THOSE industries ONLY. NEVER create questions referencing Education, Media, Entertainment, or any other industries not explicitly mentioned in the resume analysis.
+
 COMPREHENSIVE RESUME ANALYSIS:
 ${JSON.stringify(resumeAnalysis, null, 2)}
 ${userResponsesText}
@@ -666,6 +682,8 @@ CANDIDATE PROFILE:
 - Industry Experience: ${resumeAnalysis.industryExperience?.join(', ') || 'General'}
 - Leadership Experience: ${resumeAnalysis.hrProfile?.hasLeadershipExperience ? 'Yes' : 'No'}
 - Communication Skills: ${resumeAnalysis.hrProfile?.hasStrongCommunication ? 'Strong' : 'Standard'}
+
+WARNING: DO NOT reference or create questions about industries that are not listed in the resume analysis. If industry experience contains ["Fintech"], then questions should reference Fintech industry experiences ONLY.
 
 GENERATE QUESTIONS FOLLOWING THESE PROFESSIONAL STANDARDS:
 
@@ -817,6 +835,8 @@ async function generateGrokHRQuestions(resumeAnalysis: any, userResponses: UserR
 
     const prompt = `You are a senior HR interviewer with expertise in creating professional, industry-standard HR interview questions. Based on the comprehensive resume analysis below, and considering the candidate's previous answers (if provided), generate 2 HIGH-QUALITY HR questions that match professional interview standards.
 
+CRITICAL INSTRUCTION: You MUST base questions ONLY on the candidate's ACTUAL industry experience and background from the resume analysis. If the candidate has specific industry experience (like Fintech, Technology, etc.), reference THOSE industries ONLY. NEVER create questions referencing Education, Media, Entertainment, or any other industries not explicitly mentioned in the resume analysis.
+
 COMPREHENSIVE RESUME ANALYSIS:
 ${JSON.stringify(resumeAnalysis, null, 2)}
 ${userResponsesText}
@@ -838,6 +858,8 @@ CANDIDATE PROFILE:
 - Industry Experience: ${resumeAnalysis.industryExperience?.join(', ') || 'General'}
 - Leadership Experience: ${resumeAnalysis.hrProfile?.hasLeadershipExperience ? 'Yes' : 'No'}
 - Communication Skills: ${resumeAnalysis.hrProfile?.hasStrongCommunication ? 'Strong' : 'Standard'}
+
+WARNING: DO NOT reference or create questions about industries that are not listed in the resume analysis. If industry experience contains ["Fintech"], then questions should reference Fintech industry experiences ONLY.
 
 GENERATE QUESTIONS FOLLOWING THESE PROFESSIONAL STANDARDS:
 

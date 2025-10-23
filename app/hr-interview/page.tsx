@@ -158,6 +158,10 @@ export default function HRInterviewSimulatorPage() {
     localStorage.removeItem("hr_interview_setup_completed")
     console.log("[Mode Selection] Cleared setup completion flag for new interview")
 
+    // Clear stored resume analysis to prevent stale data issues
+    sessionStorage.removeItem("hrResumeAnalysis")
+    console.log("[Mode Selection] Cleared stored resume analysis to prevent stale data")
+
     // Generate a unique session ID for this interview
     const newSessionId = `hr_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
     setInterviewSessionId(newSessionId);
@@ -228,6 +232,11 @@ export default function HRInterviewSimulatorPage() {
       setError(null);
       setHRInterviewStage("analyzing"); // Show analyzing stage for all question generation
 
+      // FORCE CLEAR ANY CACHED QUESTIONS - Don't load from sessionStorage
+      setAllQuestions([]); // Clear existing questions
+      setDynamicQuestions([]); // Clear dynamic questions cache
+
+      console.log(`[Frontend] FORCED CACHE CLEAR - Not using cached questions`);
       console.log(`[Frontend] API Key before encoding: ${apiKey ? 'Provided' : 'Not Provided'}`);
 
       // Start with the fixed first question
@@ -242,7 +251,16 @@ export default function HRInterviewSimulatorPage() {
 
       console.log(`[Frontend] Generating Q2 based on resume analysis and Q1 context.`);
 
+      // HARD FORCE: Clear ALL cached data and ensure fresh API calls
+      console.log(`[Frontend API] ----- HARD CACHE CLEAR BEFORE API CALLS -----`);
+      localStorage.clear(); // Clear ALL localStorage
+      sessionStorage.clear(); // Clear ALL sessionStorage
+      console.log(`[Frontend API] All storage cleared`);
+
       // API call for Q2
+      console.log(`[Frontend API] Making request to /api/hr-questions for Q2...`);
+      console.log(`[Frontend API] Models: ${selectedAIModel}, API Key Provided: ${!!apiKey}`);
+      console.log(`[Frontend API] Resume Analysis industries:`, currentResumeAnalysis?.industryExperience);
       const q2Response = await fetch("/api/hr-questions", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -449,6 +467,10 @@ export default function HRInterviewSimulatorPage() {
     localStorage.removeItem("hr_interview_setup_completed")
     console.log("[Reset] Cleared setup completion flag for new interview")
 
+    // Clear stored resume analysis to prevent stale data in new interviews
+    sessionStorage.removeItem("hrResumeAnalysis")
+    console.log("[Reset] Cleared stored resume analysis for new interview")
+
     // Clear the specific interview responses from localStorage
     if (interviewSessionId) {
       localStorage.removeItem(`hr_interview_responses_${interviewSessionId}`);
@@ -597,6 +619,24 @@ export default function HRInterviewSimulatorPage() {
       }
     }
   }, [hrInterviewStage, allQuestions, interviewResponses.length, interviewSessionId]);
+
+  // Recover resume analysis from sessionStorage ONLY during the current interview session (page refreshes)
+  // But clear it when starting a new interview session
+  useEffect(() => {
+    // Only recover if we're in the middle of an interview (not on mode-selection)
+    if (hrInterviewStage !== "mode-selection" && !hrResumeAnalysis) {
+      try {
+        const storedResumeAnalysis = sessionStorage.getItem("hrResumeAnalysis");
+        if (storedResumeAnalysis) {
+          const parsed = JSON.parse(storedResumeAnalysis);
+          console.log("[Resume Recovery] Restoring resume analysis from current session");
+          setHRResumeAnalysis(parsed);
+        }
+      } catch (e) {
+        console.error("[Resume Recovery] Failed to recover resume analysis from sessionStorage:", e);
+      }
+    }
+  }, []);
 
   // Manual refresh function for responses
   const refreshResponsesFromStorage = useCallback(() => {
