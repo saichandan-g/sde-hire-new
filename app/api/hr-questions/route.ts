@@ -153,7 +153,7 @@ async function generateMistralHRQuestions(resumeAnalysis: any, userResponses: Us
 
     const prompt = `You are a senior HR interviewer with expertise in creating professional, industry-standard HR interview questions. Based on the comprehensive resume analysis below, and considering the candidate's previous answers (if provided), generate 2 HIGH-QUALITY HR questions that match professional interview standards.
 
-CRITICAL INSTRUCTION: You MUST base questions ONLY on the candidate's ACTUAL industry experience and background from the resume analysis. If the candidate has specific industry experience (like Fintech, Technology, etc.), reference THOSE industries ONLY. NEVER create questions referencing Education, Media, Entertainment, or any other industries not explicitly mentioned in the resume analysis.
+CRITICAL INSTRUCTION: Generate questions focused on the candidate's SPECIFIC PROJECTS, LEADERSHIP EXPERIENCES, and MEASURABLE ACHIEVEMENTS. Reference their actual work and accomplishments. Industry context should only be mentioned as background, not as the primary focus.
 
 COMPREHENSIVE RESUME ANALYSIS:
 ${JSON.stringify(resumeAnalysis, null, 2)}
@@ -171,17 +171,29 @@ QUESTION FOCUS AREAS (based on analysis):
 - Culture Fit Questions: ${resumeAnalysis.recommendedQuestionFocus?.culture_fit_questions ? 'Include' : 'Skip'}
 - Career Goals Questions: ${resumeAnalysis.recommendedQuestionFocus?.career_goals_questions ? 'Include' : 'Skip'}
 
-CANDIDATE PROFILE:
+CANDIDATE PROFILE (Priority Order - Focus on these in order):
+1) PROJECTS & ACHIEVEMENTS (HIGHEST PRIORITY):
+- Project Types: ${resumeAnalysis.projectTypes?.join(', ')}
+- Key Projects: ${resumeAnalysis.projectDetails?.summary || 'N/A'}
+- Measurable Results: ${resumeAnalysis.resultsAndImpact?.slice(0, 3).join('; ') || 'N/A'}
+
+2) LEADERSHIP EXPERIENCE:
+- Leadership: ${resumeAnalysis.hrProfile?.hasLeadershipExperience ? 'Yes' : 'No'}
+- Leadership Evidence: ${Object.keys(resumeAnalysis.leadershipExperience || {}).filter(k => resumeAnalysis.leadershipExperience[k].found).join(', ')}
+
+3) WORK EXPERIENCE & SKILLS:
 - Experience Level: ${resumeAnalysis.experienceLevel || 'mid-level'}
 - Primary Strengths: ${resumeAnalysis.hrProfile?.primaryStrengths?.join(', ') || 'Technical Skills'}
-- Industry Experience: ${resumeAnalysis.industryExperience?.join(', ') || 'General'}
-- Leadership Experience: ${resumeAnalysis.hrProfile?.hasLeadershipExperience ? 'Yes' : 'No'}
 - Communication Skills: ${resumeAnalysis.hrProfile?.hasStrongCommunication ? 'Strong' : 'Standard'}
+
+4) INDUSTRY CONTEXT (Secondary - mention only when relevant):
+- Industry Background: ${resumeAnalysis.industryExperience?.join(', ') || 'General'}
 
 QUESTION QUALITY REQUIREMENTS:
 - Questions must be specific, practical, and test real-world soft skills
+- Reference specific projects, achievements, or measurable results where possible
+- Emphasize leadership scenarios (mentoring, leading teams, decision-making)
 - Focus on behavioral and situational scenarios relevant to the candidate's background
-- Include questions that test leadership, communication, teamwork, and problem-solving
 - Questions should be suitable for a ${resumeAnalysis.experienceLevel || 'mid-level'} professional role
 - Mix of behavioral, situational, and culture-fit questions
 - CRITICAL: If user responses are provided, ensure the new questions build upon or delve deeper into those responses, or explore related areas.
@@ -193,30 +205,14 @@ QUESTION DISTRIBUTION (2 questions total):
 
 ${technicalSkillsPrompt}
 
-Behavioral Example:
-"Tell me about a time when you had to work with a difficult team member. How did you handle the situation and what was the outcome?"
+PROJECT-FOCUSED EXAMPLE:
+"Tell me about a challenging project where you had to optimize performance or delivery. What was your approach, and what measurable results did you achieve?"
 
-Situational Example:
-"If you were given a project with an unrealistic deadline, how would you approach it and communicate with stakeholders?"
+LEADERSHIP-FOCUSED EXAMPLE:
+"Describe a situation where you led a team or mentored someone through a difficult challenge. How did you approach it and what was the outcome?"
 
-Leadership Example:
-"Describe a situation where you had to lead a team through a major change or challenge. What was your approach and what did you learn?"
-
-Teamwork Example:
-"Tell me about a time when you had to collaborate with people from different departments or backgrounds. How did you ensure effective communication?"
-
-Career Goals Example:
-"Where do you see yourself in 3-5 years, and how does this role align with your career objectives?"
-
-TECHNICAL FOCUS AREAS (based on resume):
-- Leadership and management experience
-- Communication and presentation skills
-- Team collaboration and cross-functional work
-- Problem-solving and decision-making
-- Project management and delivery
-- Client/stakeholder management
-- Innovation and creativity
-- Results and impact measurement
+ACHIEVEMENT-FOCUSED EXAMPLE:
+"You mentioned achieving [result]. Walk me through how you accomplished that and the obstacles you faced."
 
 SESSION UNIQUENESS: ${randomSeed}-${currentTime}
 
@@ -225,22 +221,22 @@ FORMAT REQUIREMENTS - Return valid JSON array:
   {
     "Qid": "Q3",
     "question_type": "behavioral",
-    "question_text": "Professional HR question text here related to candidate's background",
+    "question_text": "Professional HR question text here related to candidate's projects/leadership/achievements",
     "difficulty_level": "medium",
-    "topic": "Leadership/Teamwork/Communication/etc",
+    "topic": "Leadership/Projects/Communication/etc",
     "focus_area": "Specific focus area based on resume analysis"
   },
   {
     "Qid": "Q4",
     "question_type": "situational",
-    "question_text": "Professional situational question testing soft skills",
+    "question_text": "Professional situational question testing soft skills based on projects/experience",
     "difficulty_level": "medium",
     "topic": "Problem Solving/Decision Making",
     "focus_area": "Specific focus area based on resume analysis"
   }
 ]
 
-CRITICAL: Questions must be professional-grade, relevant to the candidate's background, and test real-world soft skills they would encounter in their role. Focus on behavioral scenarios and situational challenges.`;
+CRITICAL: Questions must be professional-grade, relevant to the candidate's background, and test real-world soft skills they would encounter in their role. Prefer project- and leadership-focused scenarios over industry-focused ones.`;
 
     const response = await fetch(mistralUrl, {
       method: 'POST',
@@ -496,7 +492,7 @@ async function generateOpenAIHRQuestions(resumeAnalysis: any, userResponses: Use
 
     const prompt = `You are a senior HR interviewer with expertise in creating professional, industry-standard HR interview questions. Based on the comprehensive resume analysis below, and considering the candidate's previous answers (if provided), generate 2 HIGH-QUALITY HR questions that match professional interview standards.
 
-CRITICAL INSTRUCTION: You MUST base questions ONLY on the candidate's ACTUAL industry experience and background from the resume analysis. If the candidate has specific industry experience (like Fintech, Technology, etc.), reference THOSE industries ONLY. NEVER create questions referencing Education, Media, Entertainment, or any other industries not explicitly mentioned in the resume analysis.
+CRITICAL INSTRUCTION: Generate questions focused on the candidate's SPECIFIC PROJECTS, LEADERSHIP EXPERIENCES, and MEASURABLE ACHIEVEMENTS. Reference their actual work and accomplishments. Industry context should only be mentioned as background, not as the primary focus.
 
 COMPREHENSIVE RESUME ANALYSIS:
 ${JSON.stringify(resumeAnalysis, null, 2)}
@@ -513,21 +509,32 @@ QUESTION FOCUS AREAS (based on analysis):
 - Culture Fit Questions: ${resumeAnalysis.recommendedQuestionFocus?.culture_fit_questions ? 'Include' : 'Skip'}
 - Career Goals Questions: ${resumeAnalysis.recommendedQuestionFocus?.career_goals_questions ? 'Include' : 'Skip'}
 
-CANDIDATE PROFILE:
+CANDIDATE PROFILE (Priority Order - Focus on these in order):
+1) PROJECTS & ACHIEVEMENTS (HIGHEST PRIORITY):
+- Project Types: ${resumeAnalysis.projectTypes?.join(', ')}
+- Key Projects: ${resumeAnalysis.projectDetails?.summary || 'N/A'}
+- Measurable Results: ${resumeAnalysis.resultsAndImpact?.slice(0, 3).join('; ') || 'N/A'}
+
+2) LEADERSHIP EXPERIENCE:
+- Leadership: ${resumeAnalysis.hrProfile?.hasLeadershipExperience ? 'Yes' : 'No'}
+- Leadership Evidence: ${Object.keys(resumeAnalysis.leadershipExperience || {}).filter(k => resumeAnalysis.leadershipExperience[k].found).join(', ')}
+
+3) WORK EXPERIENCE & SKILLS:
 - Experience Level: ${resumeAnalysis.experienceLevel || 'mid-level'}
 - Primary Strengths: ${resumeAnalysis.hrProfile?.primaryStrengths?.join(', ') || 'Technical Skills'}
-- Industry Experience: ${resumeAnalysis.industryExperience?.join(', ') || 'General'}
-- Leadership Experience: ${resumeAnalysis.hrProfile?.hasLeadershipExperience ? 'Yes' : 'No'}
 - Communication Skills: ${resumeAnalysis.hrProfile?.hasStrongCommunication ? 'Strong' : 'Standard'}
 
-WARNING: DO NOT reference or create questions about industries that are not listed in the resume analysis. If industry experience contains ["Fintech"], then questions should reference Fintech industry experiences ONLY.
+4) INDUSTRY CONTEXT (Secondary - mention only when relevant):
+- Industry Background: ${resumeAnalysis.industryExperience?.join(', ') || 'General'}
+
 
 GENERATE QUESTIONS FOLLOWING THESE PROFESSIONAL STANDARDS:
 
 QUESTION QUALITY REQUIREMENTS:
 - Questions must be specific, practical, and test real-world soft skills
+- Reference specific projects, achievements, or measurable results where possible
+- Emphasize leadership scenarios (mentoring, leading teams, decision-making)
 - Focus on behavioral and situational scenarios relevant to the candidate's background
-- Include questions that test leadership, communication, teamwork, and problem-solving
 - Questions should be suitable for a ${resumeAnalysis.experienceLevel || 'mid-level'} professional role
 - Mix of behavioral, situational, and culture-fit questions
 - CRITICAL: If user responses are provided, ensure the new questions build upon or delve deeper into those responses, or explore related areas.
@@ -539,22 +546,14 @@ QUESTION DISTRIBUTION (2 questions total):
 
 ${technicalSkillsPrompt}
 
-EXAMPLES OF PROFESSIONAL HR QUESTION QUALITY:
+PROJECT-FOCUSED EXAMPLE:
+"Tell me about a challenging project where you had to optimize performance or delivery. What was your approach, and what measurable results did you achieve?"
 
-Behavioral Example:
-"Tell me about a time when you had to work with a difficult team member. How did you handle the situation and what was the outcome?"
+LEADERSHIP-FOCUSED EXAMPLE:
+"Describe a situation where you led a team or mentored someone through a difficult challenge. How did you approach it and what was the outcome?"
 
-Situational Example:
-"If you were given a project with an unrealistic deadline, how would you approach it and communicate with stakeholders?"
-
-Leadership Example:
-"Describe a situation where you had to lead a team through a major change or challenge. What was your approach and what did you learn?"
-
-Teamwork Example:
-"Tell me about a time when you had to collaborate with people from different departments or backgrounds. How did you ensure effective communication?"
-
-Career Goals Example:
-"Where do you see yourself in 3-5 years, and how does this role align with your career objectives?"
+ACHIEVEMENT-FOCUSED EXAMPLE:
+"You mentioned achieving [result]. Walk me through how you accomplished that and the obstacles you faced."
 
 TECHNICAL FOCUS AREAS (based on resume):
 - Leadership and management experience
@@ -573,22 +572,22 @@ FORMAT REQUIREMENTS - Return valid JSON array:
   {
     "Qid": "Q3",
     "question_type": "behavioral",
-    "question_text": "Professional HR question text here related to candidate's background",
+    "question_text": "Professional HR question text here related to candidate's projects/leadership/achievements",
     "difficulty_level": "medium",
-    "topic": "Leadership/Teamwork/Communication/etc",
+    "topic": "Leadership/Projects/Communication/etc",
     "focus_area": "Specific focus area based on resume analysis"
   },
   {
     "Qid": "Q4",
     "question_type": "situational",
-    "question_text": "Professional situational question testing soft skills",
+    "question_text": "Professional situational question testing soft skills based on projects/experience",
     "difficulty_level": "medium",
     "topic": "Problem Solving/Decision Making",
     "focus_area": "Specific focus area based on resume analysis"
   }
 ]
 
-CRITICAL: Questions must be professional-grade, relevant to the candidate's background, and test real-world soft skills they would encounter in their role. Focus on behavioral scenarios and situational challenges.`;
+CRITICAL: Questions must be professional-grade, relevant to the candidate's background, and test real-world soft skills they would encounter in their role. Prefer project- and leadership-focused scenarios over industry-focused ones.`;
 
     const response = await fetch(openaiUrl, {
       method: 'POST',
@@ -679,7 +678,7 @@ async function generateGoogleHRQuestions(resumeAnalysis: any, userResponses: Use
 
     const prompt = `You are a senior HR interviewer with expertise in creating professional, industry-standard HR interview questions. Based on the comprehensive resume analysis below, and considering the candidate's previous answers (if provided), generate 2 HIGH-QUALITY HR questions that match professional interview standards.
 
-CRITICAL INSTRUCTION: You MUST base questions ONLY on the candidate's ACTUAL industry experience and background from the resume analysis. If the candidate has specific industry experience (like Fintech, Technology, etc.), reference THOSE industries ONLY. NEVER create questions referencing Education, Media, Entertainment, or any other industries not explicitly mentioned in the resume analysis.
+CRITICAL INSTRUCTION: Generate questions focused on the candidate's SPECIFIC PROJECTS, LEADERSHIP EXPERIENCES, and MEASURABLE ACHIEVEMENTS. Reference their actual work and accomplishments. Industry context should only be mentioned as background, not as the primary focus.
 
 COMPREHENSIVE RESUME ANALYSIS:
 ${JSON.stringify(resumeAnalysis, null, 2)}
@@ -696,21 +695,32 @@ QUESTION FOCUS AREAS (based on analysis):
 - Culture Fit Questions: ${resumeAnalysis.recommendedQuestionFocus?.culture_fit_questions ? 'Include' : 'Skip'}
 - Career Goals Questions: ${resumeAnalysis.recommendedQuestionFocus?.career_goals_questions ? 'Include' : 'Skip'}
 
-CANDIDATE PROFILE:
+CANDIDATE PROFILE (Priority Order - Focus on these in order):
+1) PROJECTS & ACHIEVEMENTS (HIGHEST PRIORITY):
+- Project Types: ${resumeAnalysis.projectTypes?.join(', ')}
+- Key Projects: ${resumeAnalysis.projectDetails?.summary || 'N/A'}
+- Measurable Results: ${resumeAnalysis.resultsAndImpact?.slice(0, 3).join('; ') || 'N/A'}
+
+2) LEADERSHIP EXPERIENCE:
+- Leadership: ${resumeAnalysis.hrProfile?.hasLeadershipExperience ? 'Yes' : 'No'}
+- Leadership Evidence: ${Object.keys(resumeAnalysis.leadershipExperience || {}).filter(k => resumeAnalysis.leadershipExperience[k].found).join(', ')}
+
+3) WORK EXPERIENCE & SKILLS:
 - Experience Level: ${resumeAnalysis.experienceLevel || 'mid-level'}
 - Primary Strengths: ${resumeAnalysis.hrProfile?.primaryStrengths?.join(', ') || 'Technical Skills'}
-- Industry Experience: ${resumeAnalysis.industryExperience?.join(', ') || 'General'}
-- Leadership Experience: ${resumeAnalysis.hrProfile?.hasLeadershipExperience ? 'Yes' : 'No'}
 - Communication Skills: ${resumeAnalysis.hrProfile?.hasStrongCommunication ? 'Strong' : 'Standard'}
 
-WARNING: DO NOT reference or create questions about industries that are not listed in the resume analysis. If industry experience contains ["Fintech"], then questions should reference Fintech industry experiences ONLY.
+4) INDUSTRY CONTEXT (Secondary - mention only when relevant):
+- Industry Background: ${resumeAnalysis.industryExperience?.join(', ') || 'General'}
+
 
 GENERATE QUESTIONS FOLLOWING THESE PROFESSIONAL STANDARDS:
 
 QUESTION QUALITY REQUIREMENTS:
 - Questions must be specific, practical, and test real-world soft skills
+- Reference specific projects, achievements, or measurable results where possible
+- Emphasize leadership scenarios (mentoring, leading teams, decision-making)
 - Focus on behavioral and situational scenarios relevant to the candidate's background
-- Include questions that test leadership, communication, teamwork, and problem-solving
 - Questions should be suitable for a ${resumeAnalysis.experienceLevel || 'mid-level'} professional role
 - Mix of behavioral, situational, and culture-fit questions
 - CRITICAL: If user responses are provided, ensure the new questions build upon or delve deeper into those responses, or explore related areas.
@@ -722,22 +732,14 @@ QUESTION DISTRIBUTION (2 questions total):
 
 ${technicalSkillsPrompt}
 
-EXAMPLES OF PROFESSIONAL HR QUESTION QUALITY:
+PROJECT-FOCUSED EXAMPLE:
+"Tell me about a challenging project where you had to optimize performance or delivery. What was your approach, and what measurable results did you achieve?"
 
-Behavioral Example:
-"Tell me about a time when you had to work with a difficult team member. How did you handle the situation and what was the outcome?"
+LEADERSHIP-FOCUSED EXAMPLE:
+"Describe a situation where you led a team or mentored someone through a difficult challenge. How did you approach it and what was the outcome?"
 
-Situational Example:
-"If you were given a project with an unrealistic deadline, how would you approach it and communicate with stakeholders?"
-
-Leadership Example:
-"Describe a situation where you had to lead a team through a major change or challenge. What was your approach and what did you learn?"
-
-Teamwork Example:
-"Tell me about a time when you had to collaborate with people from different departments or backgrounds. How did you ensure effective communication?"
-
-Career Goals Example:
-"Where do you see yourself in 3-5 years, and how does this role align with your career objectives?"
+ACHIEVEMENT-FOCUSED EXAMPLE:
+"You mentioned achieving [result]. Walk me through how you accomplished that and the obstacles you faced."
 
 TECHNICAL FOCUS AREAS (based on resume):
 - Leadership and management experience
@@ -756,22 +758,22 @@ FORMAT REQUIREMENTS - Return valid JSON array:
   {
     "Qid": "Q3",
     "question_type": "behavioral",
-    "question_text": "Professional HR question text here related to candidate's background",
+    "question_text": "Professional HR question text here related to candidate's projects/leadership/achievements",
     "difficulty_level": "medium",
-    "topic": "Leadership/Teamwork/Communication/etc",
+    "topic": "Leadership/Projects/Communication/etc",
     "focus_area": "Specific focus area based on resume analysis"
   },
   {
     "Qid": "Q4",
     "question_type": "situational",
-    "question_text": "Professional situational question testing soft skills",
+    "question_text": "Professional situational question testing soft skills based on projects/experience",
     "difficulty_level": "medium",
     "topic": "Problem Solving/Decision Making",
     "focus_area": "Specific focus area based on resume analysis"
   }
 ]
 
-CRITICAL: Questions must be professional-grade, relevant to the candidate's background, and test real-world soft skills they would encounter in their role. Focus on behavioral scenarios and situational challenges.`;
+CRITICAL: Questions must be professional-grade, relevant to the candidate's background, and test real-world soft skills they would encounter in their role. Prefer project- and leadership-focused scenarios over industry-focused ones.`;
 
     const response = await fetch(googleUrl, {
       method: 'POST',
@@ -855,7 +857,7 @@ async function generateGrokHRQuestions(resumeAnalysis: any, userResponses: UserR
 
     const prompt = `You are a senior HR interviewer with expertise in creating professional, industry-standard HR interview questions. Based on the comprehensive resume analysis below, and considering the candidate's previous answers (if provided), generate 2 HIGH-QUALITY HR questions that match professional interview standards.
 
-CRITICAL INSTRUCTION: You MUST base questions ONLY on the candidate's ACTUAL industry experience and background from the resume analysis. If the candidate has specific industry experience (like Fintech, Technology, etc.), reference THOSE industries ONLY. NEVER create questions referencing Education, Media, Entertainment, or any other industries not explicitly mentioned in the resume analysis.
+CRITICAL INSTRUCTION: Generate questions focused on the candidate's SPECIFIC PROJECTS, LEADERSHIP EXPERIENCES, and MEASURABLE ACHIEVEMENTS. Reference their actual work and accomplishments. Industry context should only be mentioned as background, not as the primary focus.
 
 COMPREHENSIVE RESUME ANALYSIS:
 ${JSON.stringify(resumeAnalysis, null, 2)}
@@ -872,21 +874,32 @@ QUESTION FOCUS AREAS (based on analysis):
 - Culture Fit Questions: ${resumeAnalysis.recommendedQuestionFocus?.culture_fit_questions ? 'Include' : 'Skip'}
 - Career Goals Questions: ${resumeAnalysis.recommendedQuestionFocus?.career_goals_questions ? 'Include' : 'Skip'}
 
-CANDIDATE PROFILE:
+CANDIDATE PROFILE (Priority Order - Focus on these in order):
+1) PROJECTS & ACHIEVEMENTS (HIGHEST PRIORITY):
+- Project Types: ${resumeAnalysis.projectTypes?.join(', ')}
+- Key Projects: ${resumeAnalysis.projectDetails?.summary || 'N/A'}
+- Measurable Results: ${resumeAnalysis.resultsAndImpact?.slice(0, 3).join('; ') || 'N/A'}
+
+2) LEADERSHIP EXPERIENCE:
+- Leadership: ${resumeAnalysis.hrProfile?.hasLeadershipExperience ? 'Yes' : 'No'}
+- Leadership Evidence: ${Object.keys(resumeAnalysis.leadershipExperience || {}).filter(k => resumeAnalysis.leadershipExperience[k].found).join(', ')}
+
+3) WORK EXPERIENCE & SKILLS:
 - Experience Level: ${resumeAnalysis.experienceLevel || 'mid-level'}
 - Primary Strengths: ${resumeAnalysis.hrProfile?.primaryStrengths?.join(', ') || 'Technical Skills'}
-- Industry Experience: ${resumeAnalysis.industryExperience?.join(', ') || 'General'}
-- Leadership Experience: ${resumeAnalysis.hrProfile?.hasLeadershipExperience ? 'Yes' : 'No'}
 - Communication Skills: ${resumeAnalysis.hrProfile?.hasStrongCommunication ? 'Strong' : 'Standard'}
 
-WARNING: DO NOT reference or create questions about industries that are not listed in the resume analysis. If industry experience contains ["Fintech"], then questions should reference Fintech industry experiences ONLY.
+4) INDUSTRY CONTEXT (Secondary - mention only when relevant):
+- Industry Background: ${resumeAnalysis.industryExperience?.join(', ') || 'General'}
+
 
 GENERATE QUESTIONS FOLLOWING THESE PROFESSIONAL STANDARDS:
 
 QUESTION QUALITY REQUIREMENTS:
 - Questions must be specific, practical, and test real-world soft skills
+- Reference specific projects, achievements, or measurable results where possible
+- Emphasize leadership scenarios (mentoring, leading teams, decision-making)
 - Focus on behavioral and situational scenarios relevant to the candidate's background
-- Include questions that test leadership, communication, teamwork, and problem-solving
 - Questions should be suitable for a ${resumeAnalysis.experienceLevel || 'mid-level'} professional role
 - Mix of behavioral, situational, and culture-fit questions
 - CRITICAL: If user responses are provided, ensure the new questions build upon or delve deeper into those responses, or explore related areas.
@@ -898,22 +911,14 @@ QUESTION DISTRIBUTION (2 questions total):
 
 ${technicalSkillsPrompt}
 
-EXAMPLES OF PROFESSIONAL HR QUESTION QUALITY:
+PROJECT-FOCUSED EXAMPLE:
+"Tell me about a challenging project where you had to optimize performance or delivery. What was your approach, and what measurable results did you achieve?"
 
-Behavioral Example:
-"Tell me about a time when you had to work with a difficult team member. How did you handle the situation and what was the outcome?"
+LEADERSHIP-FOCUSED EXAMPLE:
+"Describe a situation where you led a team or mentored someone through a difficult challenge. How did you approach it and what was the outcome?"
 
-Situational Example:
-"If you were given a project with an unrealistic deadline, how would you approach it and communicate with stakeholders?"
-
-Leadership Example:
-"Describe a situation where you had to lead a team through a major change or challenge. What was your approach and what did you learn?"
-
-Teamwork Example:
-"Tell me about a time when you had to collaborate with people from different departments or backgrounds. How did you ensure effective communication?"
-
-Career Goals Example:
-"Where do you see yourself in 3-5 years, and how does this role align with your career objectives?"
+ACHIEVEMENT-FOCUSED EXAMPLE:
+"You mentioned achieving [result]. Walk me through how you accomplished that and the obstacles you faced."
 
 TECHNICAL FOCUS AREAS (based on resume):
 - Leadership and management experience
@@ -932,22 +937,22 @@ FORMAT REQUIREMENTS - Return valid JSON array:
   {
     "Qid": "Q3",
     "question_type": "behavioral",
-    "question_text": "Professional HR question text here related to candidate's background",
+    "question_text": "Professional HR question text here related to candidate's projects/leadership/achievements",
     "difficulty_level": "medium",
-    "topic": "Leadership/Teamwork/Communication/etc",
+    "topic": "Leadership/Projects/Communication/etc",
     "focus_area": "Specific focus area based on resume analysis"
   },
   {
     "Qid": "Q4",
     "question_type": "situational",
-    "question_text": "Professional situational question testing soft skills",
+    "question_text": "Professional situational question testing soft skills based on projects/experience",
     "difficulty_level": "medium",
     "topic": "Problem Solving/Decision Making",
     "focus_area": "Specific focus area based on resume analysis"
   }
 ]
 
-CRITICAL: Questions must be professional-grade, relevant to the candidate's background, and test real-world soft skills they would encounter in their role. Focus on behavioral scenarios and situational challenges.`;
+CRITICAL: Questions must be professional-grade, relevant to the candidate's background, and test real-world soft skills they would encounter in their role. Prefer project- and leadership-focused scenarios over industry-focused ones.`;
 
     const response = await fetch(grokUrl, {
       method: 'POST',

@@ -154,6 +154,7 @@ function analyzeResumeForHR(resumeText: string) {
   const foundSkills: FoundSkill[] = [];
   const experienceLevel = analyzeHRExperienceLevel(resumeText);
   const projectTypes = extractHRProjectTypes(resumeText);
+  const projectDetails = extractProjectDetails(resumeText);
   const industryExperience = extractIndustryExperience(resumeText);
   const leadershipExperience = extractLeadershipExperience(resumeText);
   const communicationEvidence = extractCommunicationEvidence(resumeText);
@@ -198,6 +199,7 @@ function analyzeResumeForHR(resumeText: string) {
     categorizedSkills: categorizedSkills,
     experienceLevel: experienceLevel,
     projectTypes: projectTypes,
+    projectDetails: projectDetails,
     industryExperience: industryExperience,
     leadershipExperience: leadershipExperience,
     communicationEvidence: communicationEvidence,
@@ -267,6 +269,39 @@ function extractHRProjectTypes(resumeText: string): string[] {
   });
   
   return foundTypes;
+}
+
+// Extract specific project details, achievements and brief summary for prompts
+function extractProjectDetails(resumeText: string) {
+  const lines = resumeText.split('\n');
+  const projects: string[] = [];
+  const achievements: string[] = [];
+
+  lines.forEach(line => {
+    const lineLower = line.toLowerCase();
+    if (
+      lineLower.includes('project') ||
+      lineLower.includes('built') ||
+      lineLower.includes('developed') ||
+      lineLower.includes('created') ||
+      lineLower.includes('implemented')
+    ) {
+      projects.push(line.trim());
+    }
+  });
+
+  const metricPattern = /\b(\d+%|\$\d+[\d,]*|\d+x|\+?\d+%|increased|decreased|improved|reduced|saved|boosted|cut)\b/i;
+  lines.forEach(line => {
+    if (metricPattern.test(line)) {
+      achievements.push(line.trim());
+    }
+  });
+
+  return {
+    summary: projects.slice(0, 5).join('; '),
+    achievements: achievements.slice(0, 3),
+    count: projects.length,
+  };
 }
 
 function extractIndustryExperience(resumeText: string): string[] {
