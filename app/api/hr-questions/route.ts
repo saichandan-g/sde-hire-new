@@ -194,7 +194,8 @@ CANDIDATE PROFILE (Priority Order - Focus on these in order):
 
 QUESTION QUALITY REQUIREMENTS:
 - Questions must be specific, practical, and test real-world soft skills
-- Questions must be 2-3 lines short.
+- CRITICAL: Questions MUST be strictly 2-3 lines short. DO NOT exceed 3 lines.
+- CRITICAL: Each generated question MUST be unique and distinct from all other generated questions.
 - Reference specific projects, achievements, or measurable results where possible
 - Emphasize leadership scenarios (mentoring, leading teams, decision-making)
 - Focus on behavioral and situational scenarios relevant to the candidate's background
@@ -253,7 +254,7 @@ CRITICAL: Questions must be professional-grade, relevant to the candidate's back
         messages: [
           {
             role: 'system',
-            content: 'You are a senior HR interviewer and question designer with 15+ years of experience. You create professional-grade HR interview questions that match industry standards. CRITICAL: You must respond with ONLY a valid JSON array, no markdown formatting, no code blocks, no additional text or explanations. Start your response directly with [ and end with ]. Do not use ```json``` or any other formatting.'
+            content: 'You are a senior HR interviewer and question designer with 15+ years of experience. You create professional-grade HR interview questions that match industry standards. CRITICAL: You must respond with ONLY a valid JSON array, no markdown formatting, no code blocks, no additional text or explanations. Start your response directly with [ and end with ]. Ensure each question_text is strictly 2-3 lines long and unique from other generated questions. Do not use ```json``` or any other formatting.'
           },
           {
             role: 'user',
@@ -539,6 +540,8 @@ GENERATE QUESTIONS FOLLOWING THESE PROFESSIONAL STANDARDS:
 
 QUESTION QUALITY REQUIREMENTS:
 - Questions must be specific, practical, and test real-world soft skills
+- CRITICAL: Questions MUST be strictly 2-3 lines short. DO NOT exceed 3 lines.
+- CRITICAL: Each generated question MUST be unique and distinct from all other generated questions.
 - Reference specific projects, achievements, or measurable results where possible
 - Emphasize leadership scenarios (mentoring, leading teams, decision-making)
 - Focus on behavioral and situational scenarios relevant to the candidate's background
@@ -605,7 +608,7 @@ CRITICAL: Questions must be professional-grade, relevant to the candidate's back
       body: JSON.stringify({
         model: 'gpt-4o',
         messages: [
-          { role: 'system', content: 'You are a senior HR interviewer...' },
+          { role: 'system', content: 'You are a senior HR interviewer and question designer with 15+ years of experience. You create professional-grade HR interview questions that match industry standards. CRITICAL: You must respond with ONLY a valid JSON array, no markdown formatting, no code blocks, no additional text or explanations. Start your response directly with [ and end with ]. Ensure each question_text is strictly 2-3 lines long and unique from other generated questions.' },
           { role: 'user', content: prompt }
         ],
         temperature: 0.9,
@@ -728,6 +731,8 @@ GENERATE QUESTIONS FOLLOWING THESE PROFESSIONAL STANDARDS:
 
 QUESTION QUALITY REQUIREMENTS:
 - Questions must be specific, practical, and test real-world soft skills
+- CRITICAL: Questions MUST be strictly 2-3 lines short. DO NOT exceed 3 lines.
+- CRITICAL: Each generated question MUST be unique and distinct from all other generated questions.
 - Reference specific projects, achievements, or measurable results where possible
 - Emphasize leadership scenarios (mentoring, leading teams, decision-making)
 - Focus on behavioral and situational scenarios relevant to the candidate's background
@@ -793,7 +798,7 @@ CRITICAL: Questions must be professional-grade, relevant to the candidate's back
       },
       body: JSON.stringify({
         contents: [{
-          parts: [{ text: prompt }]
+          parts: [{ text: `You are a senior HR interviewer and question designer with 15+ years of experience. You create professional-grade HR interview questions that match industry standards. CRITICAL: You must respond with ONLY a valid JSON array, no markdown formatting, no code blocks, no additional text or explanations. Start your response directly with [ and end with ]. Ensure each question_text is strictly 2-3 lines long and unique from other generated questions.\n\n${prompt}` }]
         }]
       })
     });
@@ -910,6 +915,8 @@ GENERATE QUESTIONS FOLLOWING THESE PROFESSIONAL STANDARDS:
 
 QUESTION QUALITY REQUIREMENTS:
 - Questions must be specific, practical, and test real-world soft skills
+- CRITICAL: Questions MUST be strictly 2-3 lines short. DO NOT exceed 3 lines.
+- CRITICAL: Each generated question MUST be unique and distinct from all other generated questions.
 - Reference specific projects, achievements, or measurable results where possible
 - Emphasize leadership scenarios (mentoring, leading teams, decision-making)
 - Focus on behavioral and situational scenarios relevant to the candidate's background
@@ -976,7 +983,7 @@ CRITICAL: Questions must be professional-grade, relevant to the candidate's back
       body: JSON.stringify({
         model: 'grok-1',
         messages: [
-          { role: 'system', content: 'You are a senior HR interviewer...' },
+          { role: 'system', content: 'You are a senior HR interviewer and question designer with 15+ years of experience. You create professional-grade HR interview questions that match industry standards. CRITICAL: You must respond with ONLY a valid JSON array, no markdown formatting, no code blocks, no additional text or explanations. Start your response directly with [ and end with ]. Ensure each question_text is strictly 2-3 lines long and unique from other generated questions.' },
           { role: 'user', content: prompt }
         ],
         temperature: 0.9,

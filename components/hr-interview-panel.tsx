@@ -1422,11 +1422,6 @@ export function HRInterviewPanel({
                   >
                     <Volume2 className="h-4 w-4 mr-1" /> {isSpeaking ? "Speaking…" : "Re-read Question"}
                   </Button>
-                  {isSpeaking && (
-                    <Button variant="ghost" size="sm" onClick={cancelTTS} title="Stop speaking">
-                      Stop
-                    </Button>
-                  )}
                 </div>
               </>
             )}
