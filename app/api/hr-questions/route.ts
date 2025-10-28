@@ -174,8 +174,11 @@ QUESTION FOCUS AREAS (based on analysis):
 CANDIDATE PROFILE (Priority Order - Focus on these in order):
 1) PROJECTS & ACHIEVEMENTS (HIGHEST PRIORITY):
 - Project Types: ${resumeAnalysis.projectTypes?.join(', ')}
-- Key Projects: ${resumeAnalysis.projectDetails?.summary || 'N/A'}
-- Measurable Results: ${resumeAnalysis.resultsAndImpact?.slice(0, 3).join('; ') || 'N/A'}
+- Key Projects (Detailed):
+  ${resumeAnalysis.projectDetails?.rawProjects?.map((p: string) => `- ${p}`).join('\n') || 'N/A'}
+- Measurable Achievements:
+  ${resumeAnalysis.achievements?.map((a: string) => `- ${a}`).join('\n') || 'N/A'}
+- Measurable Results (from general text): ${resumeAnalysis.resultsAndImpact?.slice(0, 3).join('; ') || 'N/A'}
 
 2) LEADERSHIP EXPERIENCE:
 - Leadership: ${resumeAnalysis.hrProfile?.hasLeadershipExperience ? 'Yes' : 'No'}
@@ -191,6 +194,7 @@ CANDIDATE PROFILE (Priority Order - Focus on these in order):
 
 QUESTION QUALITY REQUIREMENTS:
 - Questions must be specific, practical, and test real-world soft skills
+- Questions must be 2-3 lines short.
 - Reference specific projects, achievements, or measurable results where possible
 - Emphasize leadership scenarios (mentoring, leading teams, decision-making)
 - Focus on behavioral and situational scenarios relevant to the candidate's background
@@ -512,8 +516,11 @@ QUESTION FOCUS AREAS (based on analysis):
 CANDIDATE PROFILE (Priority Order - Focus on these in order):
 1) PROJECTS & ACHIEVEMENTS (HIGHEST PRIORITY):
 - Project Types: ${resumeAnalysis.projectTypes?.join(', ')}
-- Key Projects: ${resumeAnalysis.projectDetails?.summary || 'N/A'}
-- Measurable Results: ${resumeAnalysis.resultsAndImpact?.slice(0, 3).join('; ') || 'N/A'}
+- Key Projects (Detailed):
+  ${resumeAnalysis.projectDetails?.rawProjects?.map((p: string) => `- ${p}`).join('\n') || 'N/A'}
+- Measurable Achievements:
+  ${resumeAnalysis.achievements?.map((a: string) => `- ${a}`).join('\n') || 'N/A'}
+- Measurable Results (from general text): ${resumeAnalysis.resultsAndImpact?.slice(0, 3).join('; ') || 'N/A'}
 
 2) LEADERSHIP EXPERIENCE:
 - Leadership: ${resumeAnalysis.hrProfile?.hasLeadershipExperience ? 'Yes' : 'No'}
@@ -698,8 +705,11 @@ QUESTION FOCUS AREAS (based on analysis):
 CANDIDATE PROFILE (Priority Order - Focus on these in order):
 1) PROJECTS & ACHIEVEMENTS (HIGHEST PRIORITY):
 - Project Types: ${resumeAnalysis.projectTypes?.join(', ')}
-- Key Projects: ${resumeAnalysis.projectDetails?.summary || 'N/A'}
-- Measurable Results: ${resumeAnalysis.resultsAndImpact?.slice(0, 3).join('; ') || 'N/A'}
+- Key Projects (Detailed):
+  ${resumeAnalysis.projectDetails?.rawProjects?.map((p: string) => `- ${p}`).join('\n') || 'N/A'}
+- Measurable Achievements:
+  ${resumeAnalysis.achievements?.map((a: string) => `- ${a}`).join('\n') || 'N/A'}
+- Measurable Results (from general text): ${resumeAnalysis.resultsAndImpact?.slice(0, 3).join('; ') || 'N/A'}
 
 2) LEADERSHIP EXPERIENCE:
 - Leadership: ${resumeAnalysis.hrProfile?.hasLeadershipExperience ? 'Yes' : 'No'}
@@ -877,8 +887,11 @@ QUESTION FOCUS AREAS (based on analysis):
 CANDIDATE PROFILE (Priority Order - Focus on these in order):
 1) PROJECTS & ACHIEVEMENTS (HIGHEST PRIORITY):
 - Project Types: ${resumeAnalysis.projectTypes?.join(', ')}
-- Key Projects: ${resumeAnalysis.projectDetails?.summary || 'N/A'}
-- Measurable Results: ${resumeAnalysis.resultsAndImpact?.slice(0, 3).join('; ') || 'N/A'}
+- Key Projects (Detailed):
+  ${resumeAnalysis.projectDetails?.rawProjects?.map((p: string) => `- ${p}`).join('\n') || 'N/A'}
+- Measurable Achievements:
+  ${resumeAnalysis.achievements?.map((a: string) => `- ${a}`).join('\n') || 'N/A'}
+- Measurable Results (from general text): ${resumeAnalysis.resultsAndImpact?.slice(0, 3).join('; ') || 'N/A'}
 
 2) LEADERSHIP EXPERIENCE:
 - Leadership: ${resumeAnalysis.hrProfile?.hasLeadershipExperience ? 'Yes' : 'No'}

@@ -191,10 +191,13 @@ export default function HRInterviewSimulatorPage() {
       const text = await file.text()
 
       // Step 1: Analyze resume
+      const formData = new FormData();
+      formData.append('resume', file); // Append the actual File object
+
       const analysisResponse = await fetch("/api/hr-resume-analysis", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ resumeText: text }),
+        // No 'Content-Type' header needed for FormData, browser sets it automatically
+        body: formData,
       })
 
       if (!analysisResponse.ok) {

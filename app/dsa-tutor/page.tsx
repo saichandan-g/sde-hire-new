@@ -299,9 +299,6 @@ export default function DSATutorPage() {
         eventSource.close()
       })
 
-      return () => {
-        eventSource.close()
-      }
     } catch (error) {
       console.error("Error setting up SSE:", error)
       setProblemAssistance((prev) => ({
