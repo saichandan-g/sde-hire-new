@@ -322,7 +322,7 @@ app.get("/explain-stream", async (req, res) => {
         {
           headers: { "Content-Type": "application/json" },
           responseType: "stream",
-          timeout: 150000, // 5 minute timeout
+          timeout: 300000, // 5 minute timeout
         },
       )
 
