@@ -870,12 +870,12 @@ app.get("/generate-stream", async (req, res) => {
         {
           prompt: prompt,
           model: "coder",
-          stream: true,
+          stream: false,
         },
         {
           headers: { "Content-Type": "application/json" },
           responseType: "stream",
-          timeout: 150000, // 2.5 minute timeout
+          timeout: 300000, // 2.5 minute timeout
         },
       )
 
@@ -1057,7 +1057,7 @@ app.get("/generate", async (req, res) => {
         {
           headers: { "Content-Type": "application/json" },
           responseType: "stream",
-          timeout: 150000, // 2.5 minute timeout
+          timeout: 200000, // 2.5 minute timeout
         },
       )
 

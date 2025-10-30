@@ -318,7 +318,6 @@ app.get("/explain-stream", async (req, res) => {
         {
           prompt: prompt,
           model: "chat",
-          stream: true,
         },
         {
           headers: { "Content-Type": "application/json" },

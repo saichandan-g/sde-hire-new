@@ -149,7 +149,6 @@ Format your response in a clear, educational manner suitable for a student learn
       body: JSON.stringify({
         model: "chat",
         prompt: prompt,
-        stream: true,
       }),
     })
 
