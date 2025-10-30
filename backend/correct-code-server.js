@@ -17,8 +17,7 @@ app.use(
 )
 
 const PORT = 3007
-const OLLAMA_API = process.env.OLLAMA_API_URL || "http://127.0.0.1:11434/api/generate"
-const OLLAMA_MODEL = process.env.OLLAMA_MODEL || "  "
+const CHAT_API = process.env.CHAT_API_URL || "https://guru.upadyai.in/chat"
 const QUESTIONS_PATH = path.join(__dirname, "..", "app", "dsa-tutor", "questions.json")
 const CORRECTION_RESPONSE_PATH = path.join(__dirname, "app", "storage", "CorrectionResponse.json")
 
@@ -658,8 +657,6 @@ app.post("/correct-stream", async (req, res) => {
     // Send metadata
     res.write(`event: metadata\ndata: ${JSON.stringify({ fromCache: false, language: validatedLanguage })}\n\n`)
 
-    console.log(`Using Ollama API: ${OLLAMA_API}`)
-    console.log(`Using Model: ${OLLAMA_MODEL}`)
 
     // Build comprehensive prompt
     const prompt = buildCorrectionPrompt(code, validatedLanguage, question)
@@ -831,8 +828,6 @@ Cache Stats: http://localhost:${PORT}/cache-stats
 Clear Cache: DELETE http://localhost:${PORT}/clear-cache
 
 Configuration:
-- Ollama API: ${OLLAMA_API}
-- Ollama Model: ${OLLAMA_MODEL}
 - Supported Languages: ${SUPPORTED_LANGUAGES.join(", ")}
 - Cache Directory: ${CACHE_DIR}
 - Cache Expiry: ${CACHE_EXPIRY / (60 * 60 * 1000)} hours

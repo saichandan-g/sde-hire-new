@@ -16,8 +16,7 @@ app.use(
 ) // Use the cors package with more permissive settings
 
 const PORT = 3005
-const OLLAMA_API = process.env.OLLAMA_API_URL || "http://127.0.0.1:11434/api/generate"
-const OLLAMA_MODEL = process.env.OLLAMA_MODEL || "codestral:latest"
+const CHAT_API = process.env.CHAT_API_URL || "https://guru.upadyai.in/chat"
 const RESPONSE_STORAGE_PATH = path.join(__dirname, "app", "storage", "PAResponse.json")
 
 // Ensure storage directory exists
@@ -231,7 +230,7 @@ function saveResponse(questionIndex, title, responseText) {
   }
 }
 
-// Generate a fallback response when Ollama is unavailable
+// Generate a fallback response when Chat API is unavailable
 function generateFallbackResponse(question) {
   return `SECTION 1: Problem Explanation
 - The AI Mentor is not available right now. Please try again later.
@@ -315,10 +314,10 @@ app.get("/explain-stream", async (req, res) => {
 
       // Make the request with responseType: 'stream'
       const response = await axios.post(
-        OLLAMA_API,
+        CHAT_API,
         {
-          model: OLLAMA_MODEL,
           prompt: prompt,
+          model: "chat",
           stream: true,
         },
         {
@@ -402,7 +401,7 @@ app.get("/explain-stream", async (req, res) => {
         res.end()
       })
     } catch (apiError) {
-      console.error("Ollama API error:", apiError.message)
+      console.error("Chat API error:", apiError.message)
 
       // Provide a fallback response instead of an error
       const fallbackResponse = generateFallbackResponse(question)
@@ -467,15 +466,15 @@ app.get("/explain", async (req, res) => {
     const prompt = buildPrompt(question)
 
     try {
-      // Get streaming response from Ollama
-      console.log("Requesting streaming response from Ollama...")
+      // Get streaming response from Chat API
+      console.log("Requesting streaming response from Chat API...")
 
       // Make the request with responseType: 'stream'
       const response = await axios.post(
-        OLLAMA_API,
+        CHAT_API,
         {
-          model: OLLAMA_MODEL,
           prompt: prompt,
+          model: "chat",
           stream: true,
         },
         {
@@ -533,7 +532,7 @@ app.get("/explain", async (req, res) => {
           }
 
           console.log("\nStream ended, total response length:", fullResponse.length)
-          console.log("Received complete response from Ollama")
+          console.log("Received complete response from Chat API")
 
           // Clean and limit the response
           const cleanedResponse = cleanResponseText(fullResponse)
@@ -555,7 +554,7 @@ app.get("/explain", async (req, res) => {
         })
       })
     } catch (apiError) {
-      console.error("Ollama API error:", apiError.message)
+      console.error("Chat API error:", apiError.message)
 
       // Provide a fallback response instead of an error
       const fallbackResponse = generateFallbackResponse(question)
@@ -603,6 +602,7 @@ app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`)
   console.log(`Health check available at http://localhost:${PORT}/health`)
   console.log(`Response storage path: ${RESPONSE_STORAGE_PATH}`)
+  console.log(`Using Chat API at: ${CHAT_API}`)
 
   // Ensure storage directory exists on startup
   ensureStorageDirectoryExists()

@@ -115,11 +115,9 @@ app.post("/explain-stream", async (req, res) => {
     res.write(`event: metadata\ndata: ${JSON.stringify({ fromCache: false })}\n\n`)
 
     // Import environment variables
-    const OLLAMA_API_URL = process.env.OLLAMA_API_URL || "http://127.0.0.1:11434"
-    const OLLAMA_MODEL = process.env.OLLAMA_MODEL || "codestral:latest"
+    const CHAT_API = process.env.CHAT_API_URL || "https://guru.upadyai.in/chat"
 
-    console.log(`Using Ollama API at: ${OLLAMA_API_URL}`)
-    console.log(`Using model: ${OLLAMA_MODEL}`)
+    console.log(`Using Chat API at: ${CHAT_API}`)
 
     // Prepare the prompt for code explanation
     const prompt = `
@@ -139,17 +137,17 @@ Provide a comprehensive explanation with the following sections:
 Format your response in a clear, educational manner suitable for a student learning programming.
 `
 
-    console.log("Sending request to Ollama API...")
+    console.log("Sending request to Chat API...")
     console.log(`Prompt (first 150 chars): ${prompt.substring(0, 150)}...`)
 
-    // Call Ollama API
-    const response = await fetch(`${OLLAMA_API_URL}/api/generate`, {
+    // Call Chat API
+    const response = await fetch(CHAT_API, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
       body: JSON.stringify({
-        model: OLLAMA_MODEL,
+        model: "chat",
         prompt: prompt,
         stream: true,
       }),
@@ -157,12 +155,12 @@ Format your response in a clear, educational manner suitable for a student learn
 
     if (!response.ok) {
       const errorText = await response.text()
-      console.error(`Ollama API error: ${response.statusText}`)
+      console.error(`Chat API error: ${response.statusText}`)
       console.error(`Error details: ${errorText}`)
-      throw new Error(`Ollama API error: ${response.statusText}`)
+      throw new Error(`Chat API error: ${response.statusText}`)
     }
 
-    console.log("Ollama API response received, streaming to client...")
+    console.log("Chat API response received, streaming to client...")
 
     // Process the streaming response
     const reader = response.body.getReader()
@@ -180,7 +178,7 @@ Format your response in a clear, educational manner suitable for a student learn
       // Decode the chunk
       const chunk = decoder.decode(value)
 
-      // Parse the JSON responses (Ollama sends multiple JSON objects)
+      // Parse the JSON responses (Chat API sends multiple JSON objects)
       const jsonLines = chunk.split("\n").filter((line) => line.trim())
 
       for (const line of jsonLines) {
@@ -229,4 +227,4 @@ app.listen(PORT, () => {
   console.log(`Explanation endpoint: http://localhost:${PORT}/explain-stream`)
   console.log(`Cache directory: ${STORAGE_DIR}`)
   console.log(`Ready to receive explanation requests\n`)
-})  
+})

@@ -4,24 +4,8 @@ This directory contains the backend services for the SDE Hire application.
 
 ## Problem Assistance Server
 
-The Problem Assistance Server provides AI-powered explanations for DSA problems using Ollama, a local LLM server.
+The Problem Assistance Server provides AI-powered explanations for DSA problems using a chat API.
 
-### Prerequisites
-
-- [Node.js](https://nodejs.org/) (v14 or higher)
-- [Ollama](https://ollama.ai/) - Local LLM server
-
-### Setting Up Ollama
-
-1. Install Ollama from [ollama.ai](https://ollama.ai/)
-2. Pull the CodeLlama model:
-   \`\`\`bash
-   ollama pull codellama:13b-instruct
-   \`\`\`
-3. Start the Ollama server:
-   \`\`\`bash
-   ollama serve
-   \`\`\`
 
 ### Setup
 
@@ -51,7 +35,7 @@ The Problem Assistance Server provides AI-powered explanations for DSA problems 
 Checks if the server is running.
 
 #### GET /explain
-Generates an explanation for a DSA problem using Ollama.
+Generates an explanation for a DSA problem using the chat API.
 
 **Query Parameters:**
 - `index`: The index of the problem (default: 0)
@@ -71,4 +55,4 @@ The frontend application is configured to connect to this server via the `/api/p
 
 ## Fallback Behavior
 
-If Ollama is not available or encounters an error, the server will fall back to using pre-generated responses. This ensures the application remains functional even without the LLM server.
+If the chat API is not available or encounters an error, the server will fall back to using pre-generated responses. This ensures the application remains functional even without the AI service.

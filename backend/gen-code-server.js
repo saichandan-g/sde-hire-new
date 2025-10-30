@@ -16,8 +16,7 @@ app.use(
 )
 
 const PORT = 3004
-const OLLAMA_API = process.env.OLLAMA_API_URL || "http://127.0.0.1:11434/api/generate"
-const OLLAMA_MODEL = process.env.OLLAMA_MODEL || "codestral:latest"
+const CHAT_API = process.env.CHAT_API_URL || "https://guru.upadyai.in/chat"
 const QUESTIONS_PATH = path.join(__dirname, "..", "app", "dsa-tutor", "questions.json")
 const PA_RESPONSE_PATH = path.join(__dirname, "app", "storage", "PAResponse.json")
 const CODE_RESPONSE_PATH = path.join(__dirname, "app", "storage", "CodeResponse.json")
@@ -867,10 +866,10 @@ app.get("/generate-stream", async (req, res) => {
 
       // Make the request with responseType: 'stream'
       const response = await axios.post(
-        OLLAMA_API,
+        CHAT_API,
         {
-          model: OLLAMA_MODEL,
           prompt: prompt,
+          model: "coder",
           stream: true,
         },
         {
@@ -953,12 +952,12 @@ app.get("/generate-stream", async (req, res) => {
         res.end()
       })
     } catch (apiError) {
-      console.error("Ollama API error:", apiError.message)
+      console.error("Chat API error:", apiError.message)
 
       // Send error message to client
       res.write(
         `event: error\ndata: ${JSON.stringify({
-          error: "Failed to generate code with Ollama. Please try again later.",
+          error: "Failed to generate code with Chat API. Please try again later.",
           details: apiError.message,
         })}\n\n`,
       )
@@ -1044,16 +1043,16 @@ app.get("/generate", async (req, res) => {
     }
 
     try {
-      // Get streaming response from Ollama
-      console.log("Requesting streaming code generation from Ollama...")
+      // Get streaming response from Chat API
+      console.log("Requesting streaming code generation from Chat API...")
 
       // Make the request with responseType: 'stream'
       const response = await axios.post(
-        OLLAMA_API,
+        CHAT_API,
         {
-          model: OLLAMA_MODEL,
           prompt: prompt,
-          stream: true,
+          model: "coder",
+          stream: false,
         },
         {
           headers: { "Content-Type": "application/json" },
@@ -1110,7 +1109,7 @@ app.get("/generate", async (req, res) => {
           }
 
           console.log("\nStream ended, total response length:", fullResponse.length)
-          console.log("Received complete code from Ollama")
+          console.log("Received complete code from Chat API")
 
           // Clean the code response to ensure it's only code
           const cleanedCode = cleanCodeResponse(fullResponse)
@@ -1132,11 +1131,11 @@ app.get("/generate", async (req, res) => {
         })
       })
     } catch (apiError) {
-      console.error("Ollama API error:", apiError.message)
+      console.error("Chat API error:", apiError.message)
 
       // Return error message to client
       return res.status(500).send({
-        error: "Failed to generate code with Ollama. Please try again later.",
+        error: "Failed to generate code with Chat API. Please try again later.",
         details: apiError.message,
       })
     }
@@ -1178,8 +1177,7 @@ app.listen(PORT, () => {
   console.log(`Code response storage path: ${CODE_RESPONSE_PATH}`)
   console.log(`Supported languages: ${SUPPORTED_LANGUAGES.join(", ")}`)
   console.log(`Default language: ${DEFAULT_LANGUAGE}`)
-  console.log(`Using Ollama API at: ${OLLAMA_API}`)
-  console.log(`Using Ollama model: ${OLLAMA_MODEL}`)
+  console.log(`Using Chat API at: ${CHAT_API}`)
 
   // Ensure storage directory exists on startup
   ensureStorageDirectoryExists()
