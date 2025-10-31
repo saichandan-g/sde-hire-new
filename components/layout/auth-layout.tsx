@@ -154,12 +154,12 @@ useEffect(() => {
           </Button>
 
           <Button
-            variant={isActive("/dashboard/community") ? "default" : "ghost"}
+            variant={isActive("/community") ? "default" : "ghost"}
             size="sm"
             className="w-full justify-start"
             asChild
           >
-            <Link href="/dashboard/community" className="flex items-center gap-2">
+            <Link href="/community" className="flex items-center gap-2">
               <MessageSquare className="h-4 w-4" />
               <span>Community</span>
             </Link>

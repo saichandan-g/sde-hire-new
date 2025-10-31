@@ -77,13 +77,13 @@ export default function NewCommunityPostPage() {
 
     addPost(newPost)
     toast.success("Your experience has been shared!")
-    router.push("/dashboard/community")
+    router.push("/community")
     setLoading(false)
   }
 
   return (
     <div className="space-y-6 p-6">
-      <Link href="/dashboard/community">
+      <Link href="/community">
         <Button variant="ghost" className="gap-2">
           <ArrowLeft className="h-4 w-4" />
           Back to Community

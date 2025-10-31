@@ -68,7 +68,7 @@ export default function CommunityPage() {
           <h1 className="text-3xl font-bold">Community</h1>
           <p className="text-muted-foreground mt-1">Share and learn from interview experiences</p>
         </div>
-        <Link href="/dashboard/community/new">
+        <Link href="/community/new">
           <Button className="gap-2">
             <Plus className="h-4 w-4" />
             Share Experience
@@ -134,7 +134,7 @@ export default function CommunityPage() {
           </Card>
         ) : (
           filteredPosts.map((post) => (
-            <Link key={post.id} href={`/dashboard/community/${post.slug}`}>
+            <Link key={post.id} href={`/community/${post.slug}`}>
               <Card className="p-6 hover:border-primary/50 transition-colors cursor-pointer">
                 <div className="space-y-4">
                   {/* Header */}

@@ -20,7 +20,7 @@ export default function CommunityPostPage() {
   if (!post) {
     return (
       <div className="space-y-6 p-6">
-        <Link href="/dashboard/community">
+        <Link href="/community">
           <Button variant="ghost" className="gap-2">
             <ArrowLeft className="h-4 w-4" />
             Back to Community
@@ -46,7 +46,7 @@ export default function CommunityPostPage() {
   return (
     <div className="space-y-6 p-6">
       {/* Header */}
-      <Link href="/dashboard/community">
+      <Link href="/community">
         <Button variant="ghost" className="gap-2">
           <ArrowLeft className="h-4 w-4" />
           Back to Community
